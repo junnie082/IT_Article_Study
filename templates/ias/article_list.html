@@ -1,0 +1,9 @@
+{% if article_list %}
+    <ul>
+    {% for article in article_list %}
+        <li><a href="/ias/{{ article.id }}/">{{ article.subject }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>질문이 없습니다.</p>
+{% endif %}
