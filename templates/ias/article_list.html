@@ -1,7 +1,7 @@
 {% if article_list %}
     <ul>
     {% for article in article_list %}
-        <li><a href="/ias/{{ article.id }}/">{{ article.subject }}</a></li>
+        <li><a href="{% url 'ias:detail' article.id %}">{{ article.subject }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

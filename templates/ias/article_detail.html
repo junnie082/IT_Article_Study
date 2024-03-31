@@ -2,3 +2,9 @@
 <div>
     {{ article.content }}
 </div>
+
+<form action="{% url 'ias:input_create' article.id %}" method="post">
+    {% csrf_token %}
+    <textarea name="content" id="content" rows="15"></textarea>
+    <input type="submit" value="답변등록">
+</form>
