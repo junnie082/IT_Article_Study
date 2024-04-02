@@ -18,6 +18,7 @@ urlpatterns = [
          article_views.article_modify, name='article_modify'),
     path('article/delete/<int:article_id>/',
          article_views.article_delete, name='article_delete'),
+    path('article/vote/<int:article_id>/', article_views.article_vote, name='article_vote'),
 
     # input_views.py
     path('input/create/<int:article_id>/',
@@ -26,4 +27,6 @@ urlpatterns = [
          input_views.input_modify, name='input_modify'),
     path('input/delete/<int:input_id>/',
          input_views.input_delete, name='input_delete'),
+    path('input/vote/<int:input_id>/', input_views.input_vote, name='input_vote'),
+
 ]

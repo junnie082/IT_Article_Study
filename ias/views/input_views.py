@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.utils import timezone
 
 from ..forms import InputForm
@@ -18,7 +18,9 @@ def input_create(request, article_id):
             input.create_date = timezone.now()
             input.article = article
             input.save()
-            return redirect('ias:detail', article_id=article.id)
+            return redirect('{}#input_{}'.format(
+                resolve_url('ias:detail', article_id=article.id), input.id
+            ))
     else:
         form = InputForm()
     context = {'article': article, 'form': form}
@@ -35,7 +37,9 @@ def input_modify(request, input_id):
             input = form.save(commit=False)
             input.modify_date = timezone.now()
             input.save()
-            return redirect('ias:detail', article_id=input.article.id)
+            return redirect('{}#input_{}'.format(
+                resolve_url('ias:detail', article_id=input.article.id), input.id
+            ))
     else:
         form =  InputForm(instance=input)
     context = {'input': input, 'form': form}
@@ -50,3 +54,15 @@ def input_delete(request, input_id):
     else:
         input.delete()
     return redirect('ias:detail', article_id=input.article.id)
+
+
+@login_required(login_url='common:login')
+def input_vote(request, input_id):
+    input = get_object_or_404(Input, pk=input_id)
+    if request.user == input.voter:
+        messages.error(request, 'Not allowed to recommend your answer')
+    else:
+        input.voter.add(request.user)
+    return redirect('{}#input_{}'.format(
+        resolve_url('ias:detail', article_id=input.article.id), input.id
+    ))

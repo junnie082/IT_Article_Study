@@ -49,3 +49,12 @@ def article_delete(request, article_id):
         return redirect('ias:detail', article_id=article.id)
     article.delete()
     return redirect('ias:index')
+
+@login_required(login_url='common:login')
+def article_vote(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+    if request.user == article.author:
+        messages.error(request, 'Not allowed to recommend your article')
+    else:
+        article.voter.add(request.user)
+    return redirect('ias:detail', article_id=article.id)
