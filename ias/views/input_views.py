@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.utils import timezone
 
 from ..forms import InputForm
+from ..function import cmpArticleInput
 from ..models import Article, Input
 
 
@@ -17,6 +18,9 @@ def input_create(request, article_id):
             input.author = request.user # author 속성에 로그인 계정 저장
             input.create_date = timezone.now()
             input.article = article
+            input.isTheSame = cmpArticleInput(article.content, input.content)
+            print("article.content: " + article.content + "input.content: " + input.content)
+            print("input.isTheSame: " + str(input.isTheSame))
             input.save()
             return redirect('{}#input_{}'.format(
                 resolve_url('ias:detail', article_id=article.id), input.id
