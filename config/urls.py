@@ -21,5 +21,5 @@ urlpatterns = [
     path('ias/', include('ias.urls')),
     path('common/', include('common.urls')),
     path('admin/', admin.site.urls),
-    path('', base_views.index, name='index'),
+    path('', base_views.ai_index, name='ai_index'),
 ]

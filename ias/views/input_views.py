@@ -5,53 +5,53 @@ from django.utils import timezone
 
 from ..forms import InputForm
 from ..function import cmpInputArticle, chkErrors
-from ..models import Article, Input
+from ..models import Input, AI
 
 
 @login_required(login_url='common:login')
-def input_create(request, article_id):
-    article = get_object_or_404(Article, pk=article_id)
+def input_create(request, ai_id):
+    ai = get_object_or_404(AI, pk=ai_id)
     if request.method == 'POST':
         form = InputForm(request.POST)
         if form.is_valid():
             input = form.save(commit=False)
             input.author = request.user # author 속성에 로그인 계정 저장
             input.create_date = timezone.now()
-            input.article = article
+            input.ai = ai
             # print("checkErrors: " + str(chkErrors(input.content, article.content)))
-            input.errCheckedStr = ' '.join(chkErrors(input.content, article.content))
-            input.isTheSame = cmpInputArticle(input.content, article.content)
+            input.errCheckedStr = ' '.join(chkErrors(input.content, ai.content))
+            input.isTheSame = cmpInputArticle(input.content, ai.content)
 
             print("input.errCheckedStr: " + input.errCheckedStr)
             input.save()
             return redirect('{}#input_{}'.format(
-                resolve_url('ias:detail', article_id=article.id), input.id
+                resolve_url('ias:ai_detail', ai_id=ai.id), input.id
             ))
     else:
         form = InputForm()
-    context = {'article': article, 'form': form}
-    return render(request, 'ias/article_detail.html', context)
+    context = {'ai': ai, 'form': form}
+    return render(request, 'ias/ai_detail.html', context)
 
 @login_required(login_url='common:login')
 def input_modify(request, input_id):
     input = get_object_or_404(Input, pk=input_id)
     if request.user != input.author:
         messages.error(request, 'No permission to modify')
-        return redirect('ias:detail', article_id=input.article.id)
+        return redirect('ias:ai_detail', article_id=input.ai.id)
     if request.method == "POST":
         form = InputForm(request.POST, instance=input)
         if form.is_valid():
             input = form.save(commit=False)
             input.modify_date = timezone.now()
-            input.errCheckedStr = ' '.join(chkErrors(input.content, input.article.content))
-            input.isTheSame = cmpInputArticle(input.content, input.article.content)
+            input.errCheckedStr = ' '.join(chkErrors(input.content, input.ai.content))
+            input.isTheSame = cmpInputArticle(input.content, input.ai.content)
             input.save()
             return redirect('{}#input_{}'.format(
-                resolve_url('ias:detail', article_id=input.article.id), input.id
+                resolve_url('ias:ai_detail', ai_id=input.ai.id), input.id
             ))
     else:
         form =  InputForm(instance=input)
-    context = {'article': input.article, 'input': input, 'form': form}
+    context = {'ai': input.ai, 'input': input, 'form': form}
     return render(request, 'ias/input_form.html', context)
 
 
@@ -62,7 +62,7 @@ def input_delete(request, input_id):
         messages.error(request, 'No permission to delete')
     else:
         input.delete()
-    return redirect('ias:detail', article_id=input.article.id)
+    return redirect('ias:ai_detail', ai_id=input.ai.id)
 
 
 @login_required(login_url='common:login')
@@ -73,5 +73,5 @@ def input_vote(request, input_id):
     else:
         input.voter.add(request.user)
     return redirect('{}#input_{}'.format(
-        resolve_url('ias:detail', article_id=input.article.id), input.id
+        resolve_url('ias:ai_detail', ai_id=input.ai.id), input.id
     ))

@@ -3,9 +3,8 @@
 {% block content %}
 <div class="container my-3">
     <div class="row my-3">
-        <div class="col-6">
-            <a href="{% url 'ias:article_create' %}" class="btn btn-primary">Register Article</a>
-        </div>
+<!--        <div class="col-6">-->
+<!--        </div>-->
         <div class="col-6">
             <a href="{% url 'ias:ai_create' %}" class="btn btn-primary">Generate by AI</a>
         </div>
@@ -23,26 +22,26 @@
         <tr class="text-center table-dark">
             <th>Number</th>
             <th style="width: 50%">Subject</th>
-            <th>Author</th>
+<!--            <th>Author</th>-->
             <th>Date</th>
         </tr>
         </thead>
         <tbody>
-        {% if article_list %}
-        {% for article in article_list %}
+        {% if ai_list %}
+        {% for ai in ai_list %}
         <tr class="text-center">
             <td>
                 <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
-                {{ article_list.paginator.count|sub:article_list.start_index|sub:forloop.counter0|add:1 }}
+                {{ ai_list.paginator.count|sub:ai_list.start_index|sub:forloop.counter0|add:1 }}
             </td>
             <td class="text-start">
-                <a href="{% url 'ias:detail' article.id %}">{{ article.subject }}</a>
-                {% if article.input_set.count > 0 %}
-                <span class="text-danger small mx-2">{{ article.input_set.count }}</span>
-                {% endif %}
+                <a href="{% url 'ias:ai_detail' ai.id %}">{{ ai.subject }}</a>
+<!--                {% if ai.input_set.count > 0 %}-->
+<!--                <span class="text-danger small mx-2">{{ ai.input_set.count }}</span>-->
+<!--                {% endif %}-->
             </td>
-            <td>{{ article.author.username}}</td> <!-- 글쓴이 추가 -->
-            <td>{{ article.create_date }}</td>
+<!--            <td>{{ ai.author.username}}</td> &lt;!&ndash; 글쓴이 추가 &ndash;&gt;-->
+            <td>{{ ai.create_date }}</td>
         </tr>
         {% endfor %}
         {% else %}
@@ -55,9 +54,9 @@
     <!-- 페이징처리 시작 -->
     <ul class="pagination justify-content-center">
         <!-- 이전페이지 -->
-        {% if article_list.has_previous %}
+        {% if ai_list.has_previous %}
         <li class="page-item">
-                    <a class="page-link" data-page="{{ article_list.previous_page_number }}"
+                    <a class="page-link" data-page="{{ ai_list.previous_page_number }}"
            href="javascript:void(0)">Previous</a>
 
         </li>
@@ -67,9 +66,9 @@
         </li>
         {% endif %}
         <!-- 페이지리스트 -->
-        {% for page_number in article_list.paginator.page_range %}
-        {% if page_number >= article_list.number|add:-5 and page_number <= article_list.number|add:5 %}
-        {% if page_number == article_list.number %}
+        {% for page_number in ai_list.paginator.page_range %}
+        {% if page_number >= ai_list.number|add:-5 and page_number <= ai_list.number|add:5 %}
+        {% if page_number == ai_list.number %}
         <li class="page-item active" aria-current="page">
                     <a class="page-link" data-page="{{ page_number }}"
            href="javascript:void(0)">{{ page_number }}</a>
@@ -84,9 +83,9 @@
         {% endif %}
         {% endfor %}
         <!-- 다음페이지 -->
-        {% if article_list.has_next %}
+        {% if ai_list.has_next %}
         <li class="page-item">
-            <a class="page-link" data-page="{{ article_list.next_page_number }}"
+            <a class="page-link" data-page="{{ ai_list.next_page_number }}"
            href="javascript:void(0)">Next</a>
         </li>
         {% else %}
@@ -96,7 +95,7 @@
         {% endif %}
     </ul>
 </div>
-<form id="searchForm" method="get" action="{% url 'index' %}">
+<form id="searchForm" method="get" action="{% url 'ai_index' %}">
     <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
     <input type="hidden" id="page" name="page" value="{{ page }}">
 </form>

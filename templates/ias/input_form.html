@@ -4,9 +4,9 @@
 <!-- 답변 수정-->
 <div class="container my-3">
 
-<h2>{% if article.subject %} {{ article.subject}} {% endif %}</h2>
+<h2>{% if ai.subject %} {{ ai.subject}} {% endif %}</h2>
 <div class="card p-3"> <!-- Added 'card' class for border -->
-    <div class="card-text">{{ article.content|mark }}</div>
+    <div class="card-text">{{ ai.content|mark }}</div>
     <div class="d-flex justify-content-end">
     </div>
 </div>
@@ -19,7 +19,7 @@
             <label for="content" class="form-label">Inputs</label>
             <!-- Apply CSS to textarea to ensure text wraps properly -->
             <textarea class="form-control" name="content" id="content"
-                      style="height: 10px;" rows="5">{{ input.errCheckedStr|default_if_none:'' }}</textarea>
+                      rows="10">{{ input.errCheckedStr|default_if_none:'' }}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </form>
