@@ -13,26 +13,26 @@
         {% endfor %}
     </div>
     {% endif %}
-    <!-- 질문 -->
+    <!-- Article -->
     <h2 class="border-bottom py-2">{{ article.subject }}</h2>
     <div class="card my-3">
         <div class="card-body">
             <div class="card-text">{{ article.content|mark }}</div>
             <div class="d-flex justify-content-end">
-                {% if article.modify_date %}
-                <div class="badge bg-light text-dark p-2 text-start mx-3">
-                    <div class="mb-2">modified at</div>
-                    <div>{{ article.modify_date }}</div>
-                </div>
-                {% endif %}
-                <div class="badge bg-light text-dark p-2 text-start">
-                    <div class="mb-2">{{ article.author.username }}</div>
-                    <div>{{ article.create_date }}</div>
-                </div>
+<!--                {% if article.modify_date %}-->
+<!--                <div class="badge bg-light text-dark p-2 text-start mx-3">-->
+<!--                    <div class="mb-2">modified at</div>-->
+<!--                    <div>{{ article.modify_date }}</div>-->
+<!--                </div>-->
+<!--                {% endif %}-->
+<!--                <div class="badge bg-light text-dark p-2 text-start">-->
+<!--                    <div class="mb-2">{{ article.author.username }}</div>-->
+<!--                    <div>{{ article.create_date }}</div>-->
+<!--                </div>-->
             </div>
             <div class="my-3">
                 <a href="javascript:void(0)" data-uri="{% url 'ias:article_vote' article.id  %}"
-                   class="recommend btn btn-sm btn-outline-secondary"> 추천
+                   class="recommend btn btn-sm btn-outline-secondary"> Recommend
                     <span class="badge rounded-pill bg-success">{{article.voter.count}}</span>
                 </a>
                 {% if request.user == article.author %}
@@ -56,12 +56,17 @@
     </form>
     <!-- 답변 -->
     <h5 class="border-bottom my-3 py-2">{{article.input_set.count}} Responses</h5>
-    {% for input in article.input_set.all %}
-<a id="input_{{ input.id }}"></a>
-<div class="card my-3 {% if input.isTheSame %}border-3 border-success{% else %}border-2 border-danger{% endif %}">
-    <div class="card-body">
+    {% for input in article.input_set.all reversed %}
+    <a id="input_{{ input.id }}"></a>
+    <div class="card my-3 {% if input.isTheSame %}border-3 border-success{% else %}border-2 border-danger{% endif %}">
+        <div class="card-body">
         {% if input.isTheSame %}
-        <div class="card-text">{{ input.content|mark }}</div>
+        <div class="card-text">
+            {% if input.errCheckedStr %}
+            <pre class="pre-wrap">{{ input.errCheckedStr|mark }}</pre>
+            {% elif input.content %}
+            <pre class="pre-wrap">{{ input.content|mark }}</pre>
+            {% endif %}</div>
         <div class="d-flex justify-content-end">
             {% if input.modify_date %}
             <div class="badge bg-light text-dark p-2 text-start mx-3">
@@ -88,7 +93,12 @@
         </div>
         {% else %}
         <!-- Handle the case when input.isTheSame is false -->
-        <div class="card-text">{{ input.content|mark }}</div>
+        <div class="card-text">
+            {% if input.errCheckedStr %}
+            <pre class="pre-wrap">{{ input.errCheckedStr|mark }}</pre>
+            {% elif input.content %}
+            <pre class="pre-wrap">{{ input.content|mark }}</pre>
+            {% endif %}</div>
         <div class="d-flex justify-content-end">
             {% if input.modify_date %}
             <div class="badge bg-light text-dark p-2 text-start mx-3">
@@ -126,7 +136,7 @@
 const delete_elements = document.getElementsByClassName("delete");
 Array.from(delete_elements).forEach(function(element) {
     element.addEventListener('click', function() {
-        if(confirm("정말로 삭제하시겠습니까?")) {
+        if(confirm("Sure to delete?")) {
             location.href = this.dataset.uri;
         };
     });
@@ -134,7 +144,7 @@ Array.from(delete_elements).forEach(function(element) {
 const recommend_elements = document.getElementsByClassName("recommend");
 Array.from(recommend_elements).forEach(function(element) {
     element.addEventListener('click', function() {
-        if(confirm("정말로 추천하시겠습니까?")) {
+        if(confirm("Sure to recommend?")) {
             location.href = this.dataset.uri;
         };
     });
