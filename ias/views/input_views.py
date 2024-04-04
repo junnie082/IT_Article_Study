@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.utils import timezone
 
 from ..forms import InputForm
-from ..function import cmpArticleInput
+from ..function import cmpInputArticle, chkErrors
 from ..models import Article, Input
 
 
@@ -18,9 +18,11 @@ def input_create(request, article_id):
             input.author = request.user # author 속성에 로그인 계정 저장
             input.create_date = timezone.now()
             input.article = article
-            input.isTheSame = cmpArticleInput(article.content, input.content)
-            print("article.content: " + article.content + "input.content: " + input.content)
-            print("input.isTheSame: " + str(input.isTheSame))
+            # print("checkErrors: " + str(chkErrors(input.content, article.content)))
+            input.errCheckedStr = ' '.join(chkErrors(input.content, article.content))
+            input.isTheSame = cmpInputArticle(input.content, article.content)
+
+            print("input.errCheckedStr: " + input.errCheckedStr)
             input.save()
             return redirect('{}#input_{}'.format(
                 resolve_url('ias:detail', article_id=article.id), input.id
@@ -29,6 +31,7 @@ def input_create(request, article_id):
         form = InputForm()
     context = {'article': article, 'form': form}
     return render(request, 'ias/article_detail.html', context)
+
 @login_required(login_url='common:login')
 def input_modify(request, input_id):
     input = get_object_or_404(Input, pk=input_id)
@@ -40,13 +43,15 @@ def input_modify(request, input_id):
         if form.is_valid():
             input = form.save(commit=False)
             input.modify_date = timezone.now()
+            input.errCheckedStr = ' '.join(chkErrors(input.content, input.article.content))
+            input.isTheSame = cmpInputArticle(input.content, input.article.content)
             input.save()
             return redirect('{}#input_{}'.format(
                 resolve_url('ias:detail', article_id=input.article.id), input.id
             ))
     else:
         form =  InputForm(instance=input)
-    context = {'input': input, 'form': form}
+    context = {'article': input.article, 'input': input, 'form': form}
     return render(request, 'ias/input_form.html', context)
 
 

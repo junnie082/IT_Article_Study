@@ -21,6 +21,7 @@ class Input(models.Model):
     create_date = models.DateTimeField(null=True)
     modify_date = models.DateTimeField(null=True, blank=True)
     voter = models.ManyToManyField(User, related_name='voter_input')
+    errCheckedStr = models.TextField(null=True)
 
     def __str__(self):
         return self.content
