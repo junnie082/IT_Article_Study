@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import base_views, article_views, input_views
+from .views import base_views, article_views, input_views, ai_views
 
 app_name = 'ias'
 
@@ -10,6 +10,10 @@ urlpatterns = [
          base_views.index, name='index'),
     path('<int:article_id>/',
          base_views.detail, name='detail'),
+
+    # ai_views.py
+    path('ai/create/',
+         ai_views.ai_create, name='ai_create'),
 
     # article_views.py
     path('article/create/',
