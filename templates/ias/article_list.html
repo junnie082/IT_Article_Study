@@ -7,6 +7,9 @@
             <a href="{% url 'ias:article_create' %}" class="btn btn-primary">Register Article</a>
         </div>
         <div class="col-6">
+            <a href="{% url 'ias:ai_create' %}" class="btn btn-primary">Generate by AI</a>
+        </div>
+        <div class="col-6">
             <div class="input-group">
                 <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}">
                 <div class="input-group-append">
