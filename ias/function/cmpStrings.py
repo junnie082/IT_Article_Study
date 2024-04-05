@@ -38,21 +38,3 @@ def chkErrors(input, article):
         print("returnList: " + str(returnList))
 
     return returnList
-
-def createSubjectContent(string):
-    subject, content = "", ""
-    for i, c in enumerate(string):
-        if c == '{':
-            continue
-        elif c == '}':
-            content = string[i+1:]
-            break
-        else:
-            subject += c
-
-    print("subject:", subject, "content:", content)
-    return subject, content
-
-
-
-
