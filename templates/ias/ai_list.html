@@ -45,7 +45,7 @@
                 {{ ai_list.paginator.count|sub:ai_list.start_index|sub:forloop.counter0|add:1 }}
             </td>
             <td class="text-start">
-                <a href="{% url 'ias:ai_detail' ai.id %}">{{ ai.subject }}</a>
+                <a href="{% url 'ias:ai_detail' ai.id %}">{{ ai.engSubject }}</a>
                 {% if ai.input_set.count > 0 %}
                 <span class="text-danger small mx-2">{{ ai.input_set.count }}</span>
                 {% endif %}

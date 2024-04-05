@@ -14,34 +14,22 @@
     </div>
     {% endif %}
     <!-- Article -->
-    <h2 class="border-bottom py-2">{{ ai.subject }}</h2>
+    <!-- Article -->
+    <h2 class="border-bottom py-2" id="subjectDisplay">{{ ai.engSubject }}</h2>
+
+<!--    <h2 class="border-bottom py-2">{{ ai.engSubject }}</h2>-->
     <div class="card my-3">
         <div class="card-body">
-            <div class="card-text">{{ ai.content|mark }}</div>
+            <div class="card-text">{{ ai.engContent|mark }}</div>
             <div class="d-flex justify-content-end">
-<!--                {% if ai.modify_date %}-->
-<!--                <div class="badge bg-light text-dark p-2 text-start mx-3">-->
-<!--                    <div class="mb-2">modified at</div>-->
-<!--                    <div>{{ ai.modify_date }}</div>-->
-<!--                </div>-->
-<!--                {% endif %}-->
-<!--                <div class="badge bg-light text-dark p-2 text-start">-->
-<!--                    <div class="mb-2">{{ ai.author.username }}</div>-->
-<!--                    <div>{{ ai.create_date }}</div>-->
-<!--                </div>-->
             </div>
             <div class="my-3">
-<!--                   class="recommend btn btn-sm btn-outline-secondary"> Recommend-->
-<!--                    <span class="badge rounded-pill bg-success">{{ai.voter.count}}</span>-->
-<!--                </a>-->
-<!--&lt;!&ndash;                {% if request.user == ai.author %}&ndash;&gt;-->
-<!--                <a href="{% url 'ias:ai_modify' ai.id  %}"-->
-<!--                   class="btn btn-sm btn-outline-secondary">Edit</a>-->
-<!--                <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary"-->
-<!--                   data-uri="{% url 'ias:ai_delete' ai.id  %}">Delete</a>-->
-<!--                {% endif %}-->
             </div>
         </div>
+    </div>
+        <div class="text-end mb-3">
+        <input type="checkbox" id="toggleTranslationBtn" class="toggle-input visually-hidden">
+        <label for="toggleTranslationBtn" class="toggle-label btn btn-outline-primary">Toggle Translation</label>
     </div>
     <form action="{% url 'ias:input_create' ai.id %}" method="post" class="my-3">
         {% csrf_token %}
@@ -126,27 +114,86 @@
     </div>
 </div>
 {% endfor %}
-
-
 </div>
 {% endblock %}
+
 {% block script %}
 <script type='text/javascript'>
-const delete_elements = document.getElementsByClassName("delete");
-Array.from(delete_elements).forEach(function(element) {
-    element.addEventListener('click', function() {
-        if(confirm("Sure to delete?")) {
-            location.href = this.dataset.uri;
-        };
+    // Get references to the toggle button and subject/content display elements
+    const toggleButton = document.getElementById('toggleTranslationBtn');
+    const subjectDisplay = document.getElementById('subjectDisplay');
+    const contentDisplay = document.querySelector('.card-text');
+    const toggleLabel = document.querySelector('.toggle-label');
+
+    // Initial values for subject and content
+    const engSubject = "{{ ai.engSubject }}";
+    const korSubject = "{{ ai.korSubject }}";
+    const engContent = "{{ ai.engContent|mark }}";
+    const korContent = "{{ ai.korContent|mark }}";
+
+    // Set the initial subject and content display
+    subjectDisplay.textContent = engSubject;
+    contentDisplay.innerHTML = engContent;
+
+    // Set the initial label text
+    toggleLabel.textContent = "Korean";
+
+    // Add event listener to the toggle button
+    toggleButton.addEventListener('change', function() {
+        // Update the subject and content display based on the toggle state
+        if (toggleButton.checked) {
+            subjectDisplay.textContent = korSubject;
+            contentDisplay.innerHTML = korContent;
+            toggleLabel.textContent = "English";
+        } else {
+            subjectDisplay.textContent = engSubject;
+            contentDisplay.innerHTML = engContent;
+            toggleLabel.textContent = "Korean";
+        }
     });
-});
-const recommend_elements = document.getElementsByClassName("recommend");
-Array.from(recommend_elements).forEach(function(element) {
-    element.addEventListener('click', function() {
-        if(confirm("Sure to recommend?")) {
-            location.href = this.dataset.uri;
-        };
+
+    // Add event listeners for other actions
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("Sure to delete?")) {
+                location.href = this.dataset.uri;
+            };
+        });
     });
+
+    const recommend_elements = document.getElementsByClassName("recommend");
+    Array.from(recommend_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("Sure to recommend?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.getElementById('toggleTranslationBtn');
+
+    toggleButton.addEventListener('change', function() {
+        const isEnglishMode = toggleButton.checked;
+
+        if (isEnglishMode) {
+            // Enable copying when in English mode
+            document.removeEventListener('copy', preventCopy);
+        } else {
+            // Disable copying when not in English mode
+            document.addEventListener('copy', preventCopy);
+        }
+    });
+
+    function preventCopy(event) {
+        event.preventDefault();
+        alert('Copying is disabled in English Mode.');
+    }
 });
 </script>
+
+
 {% endblock %}

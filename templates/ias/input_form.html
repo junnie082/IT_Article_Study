@@ -4,9 +4,9 @@
 <!-- 답변 수정-->
 <div class="container my-3">
 
-<h2>{% if ai.subject %} {{ ai.subject}} {% endif %}</h2>
+<h2>{% if ai.engSubject %} {{ ai.engSubject}} {% endif %}</h2>
 <div class="card p-3"> <!-- Added 'card' class for border -->
-    <div class="card-text">{{ ai.content|mark }}</div>
+    <div class="card-text">{{ ai.engContent|mark }}</div>
     <div class="d-flex justify-content-end">
     </div>
 </div>

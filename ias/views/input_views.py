@@ -19,8 +19,8 @@ def input_create(request, ai_id):
             input.create_date = timezone.now()
             input.ai = ai
             # print("checkErrors: " + str(chkErrors(input.content, article.content)))
-            input.errCheckedStr = ' '.join(chkErrors(input.content, ai.content))
-            input.isTheSame = cmpInputArticle(input.content, ai.content)
+            input.errCheckedStr = ' '.join(chkErrors(input.content, ai.engContent))
+            input.isTheSame = cmpInputArticle(input.content, ai.engContent)
 
             input.save()
             return redirect('{}#input_{}'.format(
@@ -42,8 +42,8 @@ def input_modify(request, input_id):
         if form.is_valid():
             input = form.save(commit=False)
             input.modify_date = timezone.now()
-            input.errCheckedStr = ' '.join(chkErrors(input.content, input.ai.content))
-            input.isTheSame = cmpInputArticle(input.content, input.ai.content)
+            input.errCheckedStr = ' '.join(chkErrors(input.content, input.ai.engContent))
+            input.isTheSame = cmpInputArticle(input.content, input.ai.engContent)
             input.save()
             return redirect('{}#input_{}'.format(
                 resolve_url('ias:ai_detail', ai_id=input.ai.id), input.id

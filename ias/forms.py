@@ -5,10 +5,10 @@ from .models import  Input, AI
 class AIForm(forms.ModelForm):
     class Meta:
         model = AI
-        fields = ['subject', 'content']
+        fields = ['engSubject', 'engContent']
         labels = {
-            'subject': 'Subject',
-            'content': 'Content'
+            'engSubject': 'Subject',
+            'engContent': 'Content'
         }
 
 

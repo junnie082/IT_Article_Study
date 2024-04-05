@@ -2,3 +2,37 @@
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+
+/* CSS for visually hidden checkbox */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* CSS for toggle button style */
+.toggle-label {
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    background-color: white; /* Initial background color */
+    color: #2196F3; /* Initial text color */
+    border: 1px solid #2196F3; /* Initial border color */
+}
+
+.toggle-label:hover {
+    background-color: #e0e0e0;
+}
+
+/* CSS for checked toggle button style */
+.toggle-input:checked + .toggle-label {
+    background-color: #2196F3; /* Blue background color when checked */
+    color: white; /* White text color when checked */
+    border-color: #2196F3; /* Blue border color when checked */
+}
