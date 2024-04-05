@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.utils import timezone
 
 from ..forms import InputForm
-from ..function import cmpInputArticle, chkErrors
+from ..function.cmpStrings import chkErrors, cmpInputArticle
 from ..models import Input, AI
 
 
@@ -22,7 +22,6 @@ def input_create(request, ai_id):
             input.errCheckedStr = ' '.join(chkErrors(input.content, ai.content))
             input.isTheSame = cmpInputArticle(input.content, ai.content)
 
-            print("input.errCheckedStr: " + input.errCheckedStr)
             input.save()
             return redirect('{}#input_{}'.format(
                 resolve_url('ias:ai_detail', ai_id=ai.id), input.id
