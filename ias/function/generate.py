@@ -5,8 +5,6 @@ from openai import OpenAI
 
 load_dotenv()
 API_KEY = os.getenv("OPEN_AI_API_KEY")
-
-
 client = OpenAI(api_key=API_KEY)
 
 def createCompletion(topic):
