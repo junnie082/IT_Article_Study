@@ -3,8 +3,10 @@ from django.db import models
 # Create your models here.
 
 class AI(models.Model):
-    subject = models.CharField(max_length=200, null=True)
-    content = models.TextField(null=True)
+    engSubject = models.CharField(max_length=200, null=True)
+    engContent = models.TextField(null=True)
+    korSubject = models.CharField(max_length=200, null=True)
+    korContent = models.TextField(null=True)
     create_date = models.DateTimeField(null=True)
     modify_date = models.DateTimeField(null=True, blank=True)
     voter = models.ManyToManyField(User, related_name='voter_AIparagraph')

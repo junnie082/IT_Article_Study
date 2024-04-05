@@ -1,4 +1,5 @@
 import os
+import re
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -14,23 +15,16 @@ def createCompletion(topic):
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user",
-             "content": "Give me one paragraph about %s in a different way (subject, content all different). The paragraph has 4~5 lines. Title should be written as { title } content." % topic}
+             "content": "Give me one paragraph about %s in a different way (subject, content all different) in both English and Korean. Different paragraphs (English, Korean) should be distinguished by [ ].  The paragraph has 4~5 lines. Title should be written as { title } content." % topic}
         ]
     )
-    return completion
-def createSubjectContent(string):
-    subject, content = "", ""
-    for i, c in enumerate(string):
-        if c == '{':
-            continue
-        elif c == '}':
-            content = string[i+1:]
-            break
-        else:
-            subject += c
 
-    # print("subject:", subject, "content:", content)
-    return subject, content
+    return completion
+def createText(text):
+    paragraphs = re.split(r'[\{\}\[\]]', text)
+    paragraphs = [p.strip() for p in paragraphs if p.strip()]
+
+    return paragraphs
 
 
 

@@ -11,30 +11,26 @@ def cmpInputArticle(input, article):
     return False
 
 def chkErrors(input, article):
-    inputList = list(input.split())
-    articleList = list(article.split())
-    returnList = list()
+    inputList = input.split()
+    articleList = article.split()
+    returnList = []
+
 
     for index in range(len(articleList)):
-        word = ""
-
         if index >= len(inputList):
-            for i in range(len(articleList[index])):
-                word += '@'
-            print("word: " + word)
-
+            word = ""
+            for _ in range(len(articleList[index])):
+                word += "@"
+            returnList.append(word)
+        elif inputList[index] == articleList[index]:
+            returnList.append(articleList[index])
         else:
-            for i in range(len(articleList[index])):
-                if i >= len(inputList[index]):
-                    word += '@'
-                elif inputList[index][i] == "'" and articleList[index][i] == "’":
-                    word += inputList[index][i]
-                elif inputList[index][i] != articleList[index][i]:
-                    word += '@'
+            word = ""
+            for i, c in enumerate(articleList[index]):
+                if i >= len(inputList[index]) or c != inputList[index][i]:
+                    word += "@"
                 else:
-                    word += inputList[index][i]
-
-        returnList.append(word)
-        print("returnList: " + str(returnList))
+                    word += c
+            returnList.append(word)
 
     return returnList
