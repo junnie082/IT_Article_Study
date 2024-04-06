@@ -20,7 +20,12 @@
 <!--    <h2 class="border-bottom py-2">{{ ai.engSubject }}</h2>-->
     <div class="card my-3">
         <div class="card-body">
-            <div class="card-text">{{ ai.engContent|mark }}</div>
+            <div class="card-text">
+                {% for word in ai.engContent %}
+                    <a href="#" class="word-link" onclick="handleWordClick('{{ word|escapejs }}'); return false;">{{ word }}</a>
+                {% endfor %}
+            </div>
+
             <div class="d-flex justify-content-end">
             </div>
             <div class="my-3">
@@ -119,11 +124,31 @@
 
 {% block script %}
 <script type='text/javascript'>
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("Sure to delete?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+const recommend_elements = document.getElementsByClassName("recommend");
+Array.from(recommend_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("Sure to recommend?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
+
+<script type='text/javascript'>
     // Get references to the toggle button and subject/content display elements
     const toggleButton = document.getElementById('toggleTranslationBtn');
     const subjectDisplay = document.getElementById('subjectDisplay');
     const contentDisplay = document.querySelector('.card-text');
     const toggleLabel = document.querySelector('.toggle-label');
+    const responseSection = document.getElementById('responseSection');
 
     // Initial values for subject and content
     const engSubject = "{{ ai.engSubject }}";
@@ -138,6 +163,27 @@
     // Set the initial label text
     toggleLabel.textContent = "Korean";
 
+    // Function to prevent copying
+    function preventCopy(event) {
+        event.preventDefault();
+        alert('Copying is disabled in English Mode.');
+    }
+
+    // Initially disable copying
+    document.addEventListener('copy', preventCopy);
+
+    // Function to show or hide responses based on toggle state
+    function toggleResponses() {
+        console.log("Toggle button checked:", toggleButton.checked);
+        if (toggleButton.checked) {
+            responseSection.style.display = "block";
+            console.log("Responses shown");
+        } else {
+            responseSection.style.display = "none";
+            console.log("Responses hidden");
+        }
+    }
+
     // Add event listener to the toggle button
     toggleButton.addEventListener('change', function() {
         // Update the subject and content display based on the toggle state
@@ -145,54 +191,36 @@
             subjectDisplay.textContent = korSubject;
             contentDisplay.innerHTML = korContent;
             toggleLabel.textContent = "English";
+            // Enable copying when in Korean mode
+            document.removeEventListener('copy', preventCopy);
         } else {
             subjectDisplay.textContent = engSubject;
             contentDisplay.innerHTML = engContent;
             toggleLabel.textContent = "Korean";
+            // Disable copying when in English mode
+            document.addEventListener('copy', preventCopy);
         }
+        // Show or hide responses based on toggle state
+        toggleResponses();
     });
 
-    // Add event listeners for other actions
-    const delete_elements = document.getElementsByClassName("delete");
-    Array.from(delete_elements).forEach(function(element) {
-        element.addEventListener('click', function() {
-            if(confirm("Sure to delete?")) {
-                location.href = this.dataset.uri;
-            };
-        });
-    });
-
-    const recommend_elements = document.getElementsByClassName("recommend");
-    Array.from(recommend_elements).forEach(function(element) {
-        element.addEventListener('click', function() {
-            if(confirm("Sure to recommend?")) {
-                location.href = this.dataset.uri;
-            };
-        });
-    });
+    // Call toggleResponses() initially to set the initial state
+    toggleResponses();
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleButton = document.getElementById('toggleTranslationBtn');
-
-    toggleButton.addEventListener('change', function() {
-        const isEnglishMode = toggleButton.checked;
-
-        if (isEnglishMode) {
-            // Enable copying when in English mode
-            document.removeEventListener('copy', preventCopy);
-        } else {
-            // Disable copying when not in English mode
-            document.addEventListener('copy', preventCopy);
-        }
-    });
-
-    function preventCopy(event) {
-        event.preventDefault();
-        alert('Copying is disabled in English Mode.');
+    // Function to handle word click
+    function handleWordClick(word) {
+        // Make an AJAX request to fetch the Korean translation of the clicked word
+        fetchKoreanTranslation(word);
     }
-});
+
+    // Function to fetch Korean translation
+    function fetchKoreanTranslation(word) {
+        // Make an AJAX request to your backend to fetch the Korean translation
+        // Replace the alert with your logic to display the translation
+        alert("Korean translation of '" + word + "' will be displayed here.");
+    }
 </script>
 
 

@@ -12,7 +12,7 @@ class AI(models.Model):
     voter = models.ManyToManyField(User, related_name='voter_AIparagraph')
 
     def __str__(self):
-        return self.subject
+        return self.engSubject
 
 class Input(models.Model):
     ai = models.ForeignKey(AI, on_delete=models.CASCADE)
