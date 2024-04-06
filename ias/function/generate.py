@@ -15,7 +15,12 @@ def createCompletion(topic):
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user",
-             "content": "Give me one paragraph about %s in a different way (subject, content all different) in both English and Korean. Different paragraphs (English, Korean) should be distinguished by [ ].  The paragraph has 4~5 lines. Title should be written as { title } content." % topic}
+             "content": "Give me one paragraph about %s in a different way (subject, content all different) in both English and Korean. " \
+                        "The title should be wrapped in {}, and content should be wrapped in []." \
+                        "First paragraph is { title } content" \
+                        "Second paragraph is { 제목 } 내용 and should be wrapped in the [ ].  " \
+                        "Each paragraph has 4~5 lines. " \
+                        % topic}
         ]
     )
 

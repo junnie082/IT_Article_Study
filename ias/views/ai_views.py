@@ -22,6 +22,7 @@ def ai_create(request):
         create_date=timezone.now()
     )
 
+    print('paragraphs: ' + str(paragraphs))
     # print('subject: ' + str(subject) + 'content: '+ str(content))
     # You can print the content if needed
     # print(ai.content)

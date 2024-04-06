@@ -9,12 +9,14 @@
             <div class="input-group">
                 <form id="topicForm" method="get" action="{% url 'ias:ai_create' %}">
                 {% csrf_token %}
+                {% if request.user == user and user.is_superuser %}
                 <div class="input-group">
                     <input type="text" id="topic_input" name="topic" class="form-control" placeholder="Enter Topic">
                     <div class="input-group-append">
                         <button class="btn btn-outline-primary" type="submit">Generate by AI</button>
                     </div>
                 </div>
+                {% endif %}
             </form>
 
             </div>
@@ -105,6 +107,11 @@
         {% endif %}
     </ul>
 </div>
+
+<form id="searchForm" method="get" action="{% url 'ai_index' %}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+</form>
 
 {% endblock %}
 {% block script %}

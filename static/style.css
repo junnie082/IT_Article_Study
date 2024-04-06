@@ -21,9 +21,9 @@
     padding: 8px 16px;
     border-radius: 4px;
     transition: background-color 0.3s ease;
-    background-color: white; /* Initial background color */
-    color: #2196F3; /* Initial text color */
-    border: 1px solid #2196F3; /* Initial border color */
+    background-color: #2196F3; /* Blue background color when checked */
+    color: white; /* White text color when checked */
+    border-color: #2196F3; /* Blue border color when checked */
 }
 
 .toggle-label:hover {
@@ -32,7 +32,7 @@
 
 /* CSS for checked toggle button style */
 .toggle-input:checked + .toggle-label {
-    background-color: #2196F3; /* Blue background color when checked */
-    color: white; /* White text color when checked */
-    border-color: #2196F3; /* Blue border color when checked */
+    background-color: white; /* Initial background color */
+    color: #2196F3; /* Initial text color */
+    border: 1px solid #2196F3; /* Initial border color */
 }

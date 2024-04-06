@@ -8,11 +8,12 @@ from ..models import AI
 def ai_index(request):
     page = request.GET.get('page', 1) # 페이지
     kw = request.GET.get('kw', '') # 검색어
+    print("kw: " + str(kw))
     ai_list = AI.objects.order_by('-create_date')
     if kw:
         ai_list = ai_list.filter(
-            Q(subject__icontains=kw) | # 제목 검색
-            Q(content__icontains=kw)   # 내용 검색
+            Q(engSubject__icontains=kw) | # 제목 검색
+            Q(engContent__icontains=kw)   # 내용 검색
         ).distinct()
     paginator = Paginator(ai_list, 10) # 페이지당 10개씩 보여주기
     page_obj = paginator.get_page(page)
