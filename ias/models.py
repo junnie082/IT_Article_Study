@@ -16,7 +16,6 @@ class AI(models.Model):
 
 class Input(models.Model):
     ai = models.ForeignKey(AI, on_delete=models.CASCADE)
-    # article = models.ForeignKey(Article, on_delete=models.CASCADE)
     content = models.TextField(null=True)
     isTheSame = models.BooleanField(null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='author_input')

@@ -8,7 +8,6 @@ from ..models import AI
 def ai_index(request):
     page = request.GET.get('page', 1) # 페이지
     kw = request.GET.get('kw', '') # 검색어
-    print("kw: " + str(kw))
     ai_list = AI.objects.order_by('-create_date')
     if kw:
         ai_list = ai_list.filter(

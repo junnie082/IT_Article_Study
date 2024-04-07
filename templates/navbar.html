@@ -24,6 +24,11 @@
                     <a class="nav-link" href="{% url 'common:signup' %}">Sign Up</a>
                     {% endif %}
                 </li>
+                <li>
+                    {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'attendance:attendance_list' %}">Attendance</a>
+                    {% endif %}
+                </li>
             </ul>
         </div>
     </div>

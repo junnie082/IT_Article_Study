@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.utils import timezone
 
 from ..forms import InputForm
+from attendance.function.attendance import create_attendance, update_attendance
 from ..function.cmpStrings import chkErrors, cmpInputArticle
 from ..models import Input, AI
 
@@ -18,10 +19,9 @@ def input_create(request, ai_id):
             input.author = request.user # author 속성에 로그인 계정 저장
             input.create_date = timezone.now()
             input.ai = ai
-            # print("checkErrors: " + str(chkErrors(input.content, article.content)))
             input.errCheckedStr = ' '.join(chkErrors(input.content, ai.engContent))
             input.isTheSame = cmpInputArticle(input.content, ai.engContent)
-
+            update_attendance(input)
             input.save()
             return redirect('{}#input_{}'.format(
                 resolve_url('ias:ai_detail', ai_id=ai.id), input.id
@@ -44,6 +44,7 @@ def input_modify(request, input_id):
             input.modify_date = timezone.now()
             input.errCheckedStr = ' '.join(chkErrors(input.content, input.ai.engContent))
             input.isTheSame = cmpInputArticle(input.content, input.ai.engContent)
+            update_attendance(input)
             input.save()
             return redirect('{}#input_{}'.format(
                 resolve_url('ias:ai_detail', ai_id=input.ai.id), input.id

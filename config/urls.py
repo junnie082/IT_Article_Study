@@ -22,4 +22,5 @@ urlpatterns = [
     path('common/', include('common.urls')),
     path('admin/', admin.site.urls),
     path('', base_views.ai_index, name='ai_index'),
+    path('attendance', include('attendance.urls')),
 ]
