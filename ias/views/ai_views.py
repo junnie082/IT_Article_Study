@@ -1,9 +1,15 @@
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.utils import timezone
 
 from ..function.generate import createCompletion, createText
 from ..models import AI
+from attendance.models import Attendance
+
+from attendance.function.attendance import create_attendance
+
 
 # Article or any paragraphs should be generated here.
 @login_required(login_url='common:login')
@@ -22,7 +28,7 @@ def ai_create(request):
         create_date=timezone.now()
     )
 
-    print('paragraphs: ' + str(paragraphs))
+    create_attendance(ai)
     # print('subject: ' + str(subject) + 'content: '+ str(content))
     # You can print the content if needed
     # print(ai.content)

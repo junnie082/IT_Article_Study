@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'ias.apps.IasConfig',
     'common.apps.CommonConfig',
+    'attendance.apps.AttendanceConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
