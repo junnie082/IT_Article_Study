@@ -29,98 +29,174 @@
             </div>
         </div>
     </div>
-        <div class="text-end mb-3">
+    <div class="text-start mb-3">
+        <!-- Toggle button for translation -->
         <input type="checkbox" id="toggleTranslationBtn" class="toggle-input visually-hidden">
         <label for="toggleTranslationBtn" class="toggle-label btn btn-outline-primary">Toggle Translation</label>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#" onclick="showDiscussion()">Discussion</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showInput(); document.querySelector('.nav-link.active').classList.remove('active');">Assignment</a>
+        </li>
+    </ul>
     </div>
-    <form action="{% url 'ias:input_create' ai.id %}" method="post" class="my-3">
-        {% csrf_token %}
-        {% include "form_errors.html" %}
-        <div class="mb-3">
-            <label for="content" class="form-label">Input</label>
-            <textarea {% if not user.is_authenticated %}disabled{% endif %}
-                      name="content" id="content" class="form-control" rows="10"></textarea>
-        </div>
-        <input type="submit" value="Register Input" class="btn btn-primary">
-    </form>
-    <!-- 답변 -->
-    <h5 class="border-bottom my-3 py-2">{{ai.input_set.count}} Responses</h5>
-    {% for input in ai.input_set.all reversed %}
-    <a id="input_{{ input.id }}"></a>
-    <div class="card my-3 {% if input.isTheSame %}border-3 border-success{% else %}border-2 border-danger{% endif %}">
-        <div class="card-body">
-        {% if input.isTheSame %}
-        <div class="card-text">
-            {% if input.errCheckedStr %}
-            <pre class="pre-wrap">{{ input.errCheckedStr|mark }}</pre>
-            {% elif input.content %}
-            <pre class="pre-wrap">{{ input.content|mark }}</pre>
-            {% endif %}</div>
-        <div class="d-flex justify-content-end">
-            {% if input.modify_date %}
-            <div class="badge bg-light text-dark p-2 text-start mx-3">
-                <div class="mb-2">modified at</div>
-                <div>{{ input.modify_date }}</div>
-            </div>
-            {% endif %}
-            <div class="badge bg-light text-dark p-2 text-start">
-                <div class="mb-2">{{ input.author.username }}</div>
-                <div>{{ input.create_date }}</div>
-            </div>
-        </div>
-        <div class="my-3">
-            <a href="javascript:void(0)" data-uri="{% url 'ias:input_vote' input.id  %}"
-               class="recommend btn btn-sm btn-outline-secondary"> Recommend
-                <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
-            </a>
-            {% if request.user == input.author %}
-            <a href="{% url 'ias:input_modify' input.id  %}"
-               class="btn btn-sm btn-outline-secondary">Edit</a>
-            <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
-               data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
-            {% endif %}
+
+    <!-- Discussion and Input Section -->
+    <div class="discussion-prompt" style="display: none;">
+        <!-- Display existing comments -->
+        {% if ai.opinion_set.all %}
+        <div class="existing-comments mt-3">
+            <h4>Opinions</h4>
+            <ul>
+                {% for comment in ai.opinion_set.all %}
+                <li>{{ comment.opinion }} - {{ comment.author }}</li>
+                <!-- Add any other fields you want to display -->
+                {% endfor %}
+            </ul>
         </div>
         {% else %}
-        <!-- Handle the case when input.isTheSame is false -->
-        <div class="card-text">
-            {% if input.errCheckedStr %}
-            <pre class="pre-wrap">{{ input.errCheckedStr|mark }}</pre>
-            {% elif input.content %}
-            <pre class="pre-wrap">{{ input.content|mark }}</pre>
-            {% endif %}</div>
-        <div class="d-flex justify-content-end">
-            {% if input.modify_date %}
-            <div class="badge bg-light text-dark p-2 text-start mx-3">
-                <div class="mb-2">modified at</div>
-                <div>{{ input.modify_date }}</div>
-            </div>
-            {% endif %}
-            <div class="badge bg-light text-dark p-2 text-start">
-                <div class="mb-2">{{ input.author.username }}</div>
-                <div>{{ input.create_date }}</div>
-            </div>
-        </div>
-        <div class="my-3">
-            <a href="javascript:void(0)" data-uri="{% url 'ias:input_vote' input.id  %}"
-               class="recommend btn btn-sm btn-outline-secondary"> Recommend
-                <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
-            </a>
-            {% if request.user == input.author %}
-            <a href="{% url 'ias:input_modify' input.id  %}"
-               class="btn btn-sm btn-outline-secondary">Edit</a>
-            <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
-               data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
-            {% endif %}
-        </div>
+        <p>No comments yet.</p>
         {% endif %}
+        <!-- Discussion prompt-->
+        <form action="{% url 'discussion:opinion_create' ai.id %}" method="post" class="my-3">
+            {% csrf_token %}
+            <!-- Add your discussion form fields here -->
+            <div class="mb-3">
+<!--                <label for="comment" class="form-label">Discussion</label>-->
+                <textarea name="comment" id="comment" class="form-control" rows="5"></textarea>
+            </div>
+            <input type="submit" value="Submit Discussion" class="btn btn-primary">
+        </form>
+
     </div>
-</div>
-{% endfor %}
+
+    <!-- Input prompt -->
+    <div class="input-prompt" style="display: none;">
+        <form action="{% url 'ias:input_create' ai.id %}" method="post" class="my-3">
+            {% csrf_token %}
+            {% include "form_errors.html" %}
+            <div class="mb-3">
+                <label for="content" class="form-label">Input</label>
+                <textarea {% if not user.is_authenticated %}disabled{% endif %}
+                          name="content" id="content" class="form-control" rows="5"></textarea>
+            </div>
+            <input type="submit" value="Register Input" class="btn btn-primary">
+        </form>
+        <!-- Responses -->
+        <h5 class="border-bottom my-3 py-2">{{ai.input_set.count}} Responses</h5>
+        {% for input in ai.input_set.all reversed %}
+        <a id="input_{{ input.id }}"></a>
+        <div class="card my-3 {% if input.isTheSame %}border-3 border-success{% else %}border-2 border-danger{% endif %}">
+            <div class="card-body">
+                {% if input.isTheSame %}
+                <div class="card-text">
+                    {% if input.errCheckedStr %}
+                    <pre class="pre-wrap">{{ input.errCheckedStr|mark }}</pre>
+                    {% elif input.content %}
+                    <pre class="pre-wrap">{{ input.content|mark }}</pre>
+                    {% endif %}</div>
+                <div class="d-flex justify-content-end">
+                    {% if input.modify_date %}
+                    <div class="badge bg-light text-dark p-2 text-start mx-3">
+                        <div class="mb-2">modified at</div>
+                        <div>{{ input.modify_date }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="badge bg-light text-dark p-2 text-start">
+                        <div class="mb-2">{{ input.author.username }}</div>
+                        <div>{{ input.create_date }}</div>
+                    </div>
+                </div>
+                <div class="my-3">
+                    <a href="javascript:void(0)" data-uri="{% url 'ias:input_vote' input.id  %}"
+                       class="recommend btn btn-sm btn-outline-secondary"> Recommend
+                        <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
+                    </a>
+                    {% if request.user == input.author %}
+                    <a href="{% url 'ias:input_modify' input.id  %}"
+                       class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
+                       data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <!-- Handle the case when input.isTheSame is false -->
+                <div class="card-text">
+                    {% if input.errCheckedStr %}
+                    <pre class="pre-wrap">{{ input.errCheckedStr|mark }}</pre>
+                    {% elif input.content %}
+                    <pre class="pre-wrap">{{ input.content|mark }}</pre>
+                    {% endif %}</div>
+                <div class="d-flex justify-content-end">
+                    {% if input.modify_date %}
+                    <div class="badge bg-light text-dark p-2 text-start mx-3">
+                        <div class="mb-2">modified at</div>
+                        <div>{{ input.modify_date }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="badge bg-light text-dark p-2 text-start">
+                        <div class="mb-2">{{ input.author.username }}</div>
+                        <div>{{ input.create_date }}</div>
+                    </div>
+                </div>
+                <div class="my-3">
+                    <a href="javascript:void(0)" data-uri="{% url 'ias:input_vote' input.id  %}"
+                       class="recommend btn btn-sm btn-outline-secondary"> Recommend
+                        <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
+                    </a>
+                    {% if request.user == input.author %}
+                    <a href="{% url 'ias:input_modify' input.id  %}"
+                       class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
+                       data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
 
 {% block script %}
+
+<script type="text/javascript">
+
+    // Function to show discussion section when the page loads
+    window.addEventListener('DOMContentLoaded', function() {
+        showDiscussion();
+    });
+
+    function showDiscussion() {
+        // Logic to show discussion content
+        var discussionPrompt = document.querySelector('.discussion-prompt');
+        var inputPrompt = document.querySelector('.input-prompt');
+
+        discussionPrompt.style.display = 'block';
+        inputPrompt.style.display = 'none'; // Hide input prompt
+
+        console.log("Discussion content shown");
+    }
+
+    function showInput() {
+        // Logic to show input prompt
+        var discussionPrompt = document.querySelector('.discussion-prompt');
+        var inputPrompt = document.querySelector('.input-prompt');
+
+        inputPrompt.style.display = 'block';
+        discussionPrompt.style.display = 'none'; // Hide discussion prompt
+
+        console.log("Input prompt shown");
+    }
+
+</script>
+
 <script type='text/javascript'>
+
 const delete_elements = document.getElementsByClassName("delete");
 Array.from(delete_elements).forEach(function(element) {
     element.addEventListener('click', function() {
@@ -146,7 +222,8 @@ Array.from(recommend_elements).forEach(function(element) {
     const contentDisplay = document.querySelector('.card-text');
     const toggleLabel = document.querySelector('.toggle-label');
     const responseSection = document.getElementById('responseSection');
-
+    const discussionSection = document.getElementById('discussionSection'); // Added reference for discussion section
+    const discussinLabel = document.querySelector('.discussion-toggle-label');
     // Initial values for subject and content
     const engSubject = "{{ ai.engSubject }}";
     const korSubject = "{{ ai.korSubject }}";
@@ -181,6 +258,7 @@ Array.from(recommend_elements).forEach(function(element) {
         }
     }
 
+    // Function to show or hide discussion section based on toggle state
     // Add event listener to the toggle button
     toggleButton.addEventListener('change', function() {
         // Update the subject and content display based on the toggle state
@@ -199,6 +277,12 @@ Array.from(recommend_elements).forEach(function(element) {
         }
         // Show or hide responses based on toggle state
         toggleResponses();
+    });
+
+    // Add event listener to the toggle section button
+    toggleSectionBtn.addEventListener('change', function() {
+        // Show or hide discussion section based on toggle state
+        toggleDiscussion();
     });
 
     // Call toggleResponses() initially to set the initial state

@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'ias.apps.IasConfig',
     'common.apps.CommonConfig',
     'attendance.apps.AttendanceConfig',
+    'discussion.apps.DiscussionConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
