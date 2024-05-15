@@ -48,8 +48,8 @@
             </td>
             <td class="text-start">
                 <a href="{% url 'ias:ai_detail' ai.id %}">{{ ai.engSubject }}</a>
-                {% if ai.input_set.count > 0 %}
-                <span class="text-danger small mx-2">{{ ai.input_set.count }}</span>
+                {% if ai.opinion_set.count > 0 %}
+                <span class="text-danger small mx-2">{{ ai.opinion_set.count }}</span>
                 {% endif %}
             </td>
 <!--            <td>{{ ai.author.username}}</td> &lt;!&ndash; 글쓴이 추가 &ndash;&gt;-->

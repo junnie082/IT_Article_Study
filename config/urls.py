@@ -23,4 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', base_views.ai_index, name='ai_index'),
     path('attendance', include('attendance.urls')),
+    path('discussion/', include('discussion.urls')),
 ]
