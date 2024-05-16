@@ -21,29 +21,30 @@
             </tr>
         </thead>
         <tbody>
-            {% if ai_list %}
-            {% for id, article, due_date, attendance_values in rowData reversed%}
-            <tr class="text-center">
-                <td>{{ ai_list.paginator.num_pages|add:"-1"|add:forloop.revcounter }}</td>
-                <td><a href="{% url 'ias:ai_detail' id %}">{{ article }}</a></td>
-                <td>{{ due_date }}</td>  <!-- You can add the actual due date here -->
-                {% for value in attendance_values %}
-                <td>
-                    {% if value %}
-                    <a>O</a>
-                    {% else %}
-                    <a>X</a>
-                    {% endif %}
-                </td>
-                {% endfor %}
-            </tr>
+        {% if ai_list %}
+        {% for id, article, due_date, attendance_values in rowData reversed %}
+        <tr class="text-center">
+            <td>{{ ai_list.paginator.num_pages|add:"-1"|add:forloop.revcounter }}</td>
+            <td><a href="{% url 'ias:ai_detail' id %}">{{ article }}</a></td>
+            <!-- Add 7 days to the due_date -->
+            <td>{{ due_date|add_days:7 }}</td>  <!-- You can add the actual due date here -->
+            {% for value in attendance_values %}
+            <td>
+                {% if value %}
+                <a>O</a>
+                {% else %}
+                <a>X</a>
+                {% endif %}
+            </td>
             {% endfor %}
-            {% else %}
-            <tr>
-                <td colspan="4">There's no Attendance.</td>
-            </tr>
-            {% endif %}
-        </tbody>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="4">There's no Attendance.</td>
+        </tr>
+        {% endif %}
+    </tbody>
     </table>
     <!-- Pagination -->
     <ul class="pagination justify-content-center">
