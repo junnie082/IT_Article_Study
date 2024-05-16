@@ -1,4 +1,6 @@
 from django import forms
+
+from discussion.models import Opinion
 from .models import  Input, AI
 
 
@@ -18,4 +20,13 @@ class InputForm(forms.ModelForm):
         fields = ['content']
         labels = {
             'content': 'Content'
+        }
+
+
+class OpinionForm(forms.ModelForm):
+    class Meta:
+        model = Opinion
+        fields = ['opinion']
+        labels = {
+            'opinion': 'Opinion'
         }
