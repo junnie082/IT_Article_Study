@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load ias_filter %}
+{% block content %}
+<!-- Opinion comment 수정-->
+<div class="container my-3">
+
+<h2>{% if ai.engSubject %} {{ ai.engSubject}} {% endif %}</h2>
+<div class="card p-3"> <!-- Added 'card' class for border -->
+    <div class="card-text">{{ ai.engContent|mark }}</div>
+    <div class="d-flex justify-content-end">
+    </div>
+</div>
+
+<div class="container my-3">
+    <form method="post">
+        {% csrf_token %}
+        {% include "form_errors.html" %}
+        <div class="mb-3">
+            <label for="opinion" class="form-label">Opinion</label>
+            <!-- Apply CSS to textarea to ensure text wraps properly -->
+            <textarea class="form-control" name="opinion" id="opinion"
+                      rows="10">{{ opinion |default_if_none:'' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+
+{% endblock %}

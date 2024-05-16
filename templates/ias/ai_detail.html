@@ -14,7 +14,7 @@
     </div>
     {% endif %}
     <!-- Article -->
-    <h2 class="border-bottom py-2" id="subjectDisplay">{{ ai.engSubject }}</h2>
+    <h2 class="border-bottom py-2" id="subjectDisplay">{{ ai.pk }}. {{ ai.engSubject }}</h2>
     <div class="card my-3">
         <div class="card-body">
             <div class="card-text">
@@ -47,19 +47,49 @@
     <!-- Discussion and Input Section -->
     <div class="discussion-prompt" style="display: none;">
         <!-- Display existing comments -->
-        {% if ai.opinion_set.all %}
         <div class="existing-comments mt-3">
-            <h4>Opinions</h4>
+            <h4 class="border-bottom my-3 py-2">{{ ai.opinion_set.count }} Opinions</h4>
             <ul>
-                {% for comment in ai.opinion_set.all %}
-                <li>{{ comment.opinion }} - {{ comment.author }}</li>
-                <!-- Add any other fields you want to display -->
-                {% endfor %}
+                {% if ai.opinion_set.all %}
+                    {% for opinion in ai.opinion_set.all %}
+                        <a id="opinion_{{ opinion.id }}"></a>
+                        <div class="card my-1">
+                            <div class="card-body">
+                                <div class="card-text">
+                                    <pre class="pre~wrap">{{ opinion.opinion | mark }}</pre>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content">
+                                <div class="badge bg-light text-dark p-1 text-start">
+                                    <div class="mb-1">{{ opinion.author }}</div>
+                                    <div>{{ opinion.create_date }}</div>
+                                </div>
+                                {% if opinion.modify_date %}
+                                <div class="badge bg-light text-dark p-1 text-start mx-3">
+                                    <div class="mb-1">modified at</div>
+                                    <div>{{ opinion.modify_date }}</div>
+                                </div>
+                                {% endif %}
+                                <div class="my-1">
+                                    <a href="javascript:void(0)" data-uri="{% url 'discussion:opinion_vote' opinion.id  %}"
+                                       class="recommend btn btn-sm btn-outline-secondary"> Recommend
+                                        <span class="badge rounded-pill bg-success">{{opinion.voter.count}}</span>
+                                    </a>
+                                    {% if request.user == opinion.author %}
+                                    <a href="{% url 'discussion:opinion_modify' opinion.id  %}"
+                                       class="btn btn-sm btn-outline-secondary">Edit</a>
+                                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
+                                       data-uri="{% url 'discussion:opinion_delete' opinion.id  %}">Delete</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No comments yet.</p>
+                {% endif %}
             </ul>
         </div>
-        {% else %}
-        <p>No comments yet.</p>
-        {% endif %}
         <!-- Discussion prompt-->
         <form action="{% url 'discussion:opinion_create' ai.id %}" method="post" class="my-3">
             {% csrf_token %}
@@ -83,10 +113,10 @@
                 <textarea {% if not user.is_authenticated %}disabled{% endif %}
                           name="content" id="content" class="form-control" rows="5"></textarea>
             </div>
-            <input type="submit" value="Register Input" class="btn btn-primary">
+            <input type="submit" value="Submit Assignment" class="btn btn-primary">
         </form>
         <!-- Responses -->
-        <h5 class="border-bottom my-3 py-2">{{ai.input_set.count}} Responses</h5>
+        <h4 class="border-bottom my-3 py-2">{{ai.input_set.count}} Responses</h4>
         {% for input in ai.input_set.all reversed %}
         <a id="input_{{ input.id }}"></a>
         <div class="card my-3 {% if input.isTheSame %}border-3 border-success{% else %}border-2 border-danger{% endif %}">
@@ -129,7 +159,8 @@
                     <pre class="pre-wrap">{{ input.errCheckedStr|mark }}</pre>
                     {% elif input.content %}
                     <pre class="pre-wrap">{{ input.content|mark }}</pre>
-                    {% endif %}</div>
+                    {% endif %}
+                </div>
                 <div class="d-flex justify-content-end">
                     {% if input.modify_date %}
                     <div class="badge bg-light text-dark p-2 text-start mx-3">
