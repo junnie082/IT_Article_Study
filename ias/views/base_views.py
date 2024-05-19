@@ -17,7 +17,7 @@ def ai_index(request):
         ).distinct()
     paginator = Paginator(ai_list, 10) # 페이지당 10개씩 보여주기
     page_obj = paginator.get_page(page)
-    context = {'ai_list': page_obj, 'page': page, 'kw': kw}
+    context = {'ai_list': page_obj,  'page': page, 'kw': kw}
 
     return render(request, 'ias/ai_list.html', context)
 

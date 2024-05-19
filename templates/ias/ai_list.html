@@ -54,7 +54,7 @@
                 {% endif %}
             </td>
 <!--            <td>{{ ai.author.username}}</td> &lt;!&ndash; 글쓴이 추가 &ndash;&gt;-->
-            <td>{{ ai.create_date }}</td>
+            <td>{{ ai.create_date|add_days:0 }}</td>
         </tr>
         {% endfor %}
         {% else %}
