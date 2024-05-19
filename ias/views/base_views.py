@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 
+from ..function.inputBlock import get_recent_week
 from ..models import AI
 
 
@@ -24,6 +25,8 @@ def ai_index(request):
 
 def ai_detail(request, ai_id):
     ai = get_object_or_404(AI, pk=ai_id)
-    context = {'ai': ai}
+    recentWeek = get_recent_week()
+    print('recentWeek: ' + str(recentWeek))
+    context = {'ai': ai, 'recentWeek': recentWeek}
     return render(request, 'ias/ai_detail.html', context)
 

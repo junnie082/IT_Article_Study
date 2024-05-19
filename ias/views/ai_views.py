@@ -17,7 +17,6 @@ def ai_create(request):
     topic = request.GET.get('topic', '')  # 검색어
     text = createCompletion(topic).choices[0].message.content
 
-    print('text: ' + text)
     paragraphs = createText(text)
     # Create an instance of the AI model and populate it with the response
     ai = AI.objects.create(

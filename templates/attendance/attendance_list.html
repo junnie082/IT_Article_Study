@@ -21,13 +21,12 @@
             </tr>
         </thead>
         <tbody>
-        {% if ai_list %}
-        {% for id, article, due_date, attendance_values in rowData reversed %}
+        {% if rowData %}
+        {% for id, article, due_date, attendance_values in rowData %}
         <tr class="text-center">
-            <td>{{ ai_list.paginator.num_pages|add:"-1"|add:forloop.revcounter }}</td>
+            <td>{{ forloop.counter }}</td>
             <td><a href="{% url 'ias:ai_detail' id %}">{{ article }}</a></td>
-            <!-- Add 7 days to the due_date -->
-            <td>{{ due_date|add_days:7 }}</td>  <!-- You can add the actual due date here -->
+            <td>{{ due_date|add_days:7 }}</td>
             {% for value in attendance_values %}
             <td>
                 {% if value %}
@@ -44,7 +43,7 @@
             <td colspan="4">There's no Attendance.</td>
         </tr>
         {% endif %}
-    </tbody>
+        </tbody>
     </table>
     <!-- Pagination -->
     <ul class="pagination justify-content-center">

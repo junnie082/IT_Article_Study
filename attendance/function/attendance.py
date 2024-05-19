@@ -3,6 +3,7 @@ from datetime import timedelta
 from attendance.models import Attendance
 from django.utils import timezone
 
+
 def create_attendance(ai):
     existing_attendance = Attendance.objects.create(week=ai.id, due_date=timezone.now() + timedelta(days=7))
 
