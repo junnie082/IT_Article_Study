@@ -21,7 +21,7 @@
          <tr>
              <td>{{ attendance.0 }}</td>
              <td><a href="{% url 'ias:ai_detail' attendance.0 %}">{{ attendance.1 }}</a></td>
-             <td>{{ attendance.2 }}</td>
+             <td>{{ attendance.2|add_days:7 }}</td>
              {% for value in attendance.3 %}
              <td>
                  {% if value %}

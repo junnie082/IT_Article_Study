@@ -3,9 +3,6 @@ from django.db.models import Q
 from django.shortcuts import render
 
 from ias.models import AI
-
-from attendance.models import Attendance
-
 from attendance.function.user import getUsers, getAttendance
 
 
