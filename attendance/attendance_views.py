@@ -1,43 +1,38 @@
 from django.core.paginator import Paginator
-from django.db.models import Q
 from django.shortcuts import render
 
+from .function.user import getUsers, getAttendance
+from .models import Attendance
 from ias.models import AI
 
-from attendance.models import Attendance
-
-from attendance.function.user import getUsers, getAttendance
-
-
-# Create your views here.
 def attendance_list(request):
-    page = request.GET.get('page', 1)  # Page number
-    kw = request.GET.get('kw', '')  # Search keyword
-    ai_list = AI.objects.all()
-    if kw:
-        ai_list = ai_list.filter(
-            Q(engSubject__icontains=kw) |  # Search by subject
-            Q(engContent__icontains=kw)  # Search by content
-        ).distinct()
+    # Get all attendance instances
+    attendance_instances = Attendance.objects.all()
 
-    paginator = Paginator(ai_list, 10)  # Display 10 items per page
-    page_obj = paginator.get_page(page)
-    users = getUsers()  # Assuming this function returns the list of users
+    # Get all AI instances
+    ai_list = AI.objects.order_by('-create_date')
+
     attendance, due_dates = getAttendance(ai_list)  # Assuming this function returns attendance data for each article
 
     # Prepare rowData
     rowData = []
-    for id, (ai, ai_attendance, due_date) in enumerate(zip(ai_list, attendance, due_dates), start=1):
+    for ai, ai_attendance, due_date in zip(ai_list, attendance, due_dates):
         article = ai.engSubject  # Article name
         attendance_values = ai_attendance  # Attendance values for each user
-        rowData.append((id, article, due_date, attendance_values))
+        rowData.append((ai.pk, article, due_date, attendance_values))
+
+    # Paginate the queryset with 10 items per page
+    paginator = Paginator(rowData, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    users = getUsers()
 
     context = {
-        'ai_list': page_obj,
+        'page_obj': page_obj,  # Pass the paginated queryset to the template
         'rowData': rowData,
-        'users': users,
-        'page': page,
-        'kw': kw,
+        'ai_list': ai_list,    # Pass the AI instances to the template
+        'users': users
     }
 
     return render(request, 'attendance/attendance_list.html', context)

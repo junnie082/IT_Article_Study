@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from ias.models import AI
+from ias.models import AI, Input
+
 
 class Attendance(models.Model):
     week = models.IntegerField(null=True)

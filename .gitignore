@@ -1,1 +1,7 @@
 .env
+
+*.pyc
+*.xml
+
+
+db.sqlite3
