@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.utils import timezone
 
+from attendance.models import Attendance
 from ..forms import InputForm
 from attendance.function.attendance import create_attendance, update_attendance
 from ..function.cmpStrings import chkErrors, cmpInputArticle
@@ -57,12 +58,21 @@ def input_modify(request, input_id):
 
 @login_required(login_url='common:login')
 def input_delete(request, input_id):
-    input = get_object_or_404(Input, pk=input_id)
-    if request.user != input.author:
-        messages.error(request, 'No permission to delete')
-    else:
-        input.delete()
-    return redirect('ias:ai_detail', ai_id=input.ai.id)
+     input_instance = get_object_or_404(Input, pk=input_id)
+     ai_id = input_instance.ai.id  # Store AI ID before deletion
+
+     if request.user != input_instance.author:
+         messages.error(request, 'No permission to delete')
+     else:
+         # Delete the related Attendance instance if it exists
+         attendance_instance = Attendance.objects.filter(week=input_instance.ai.id, user=request.user).first()
+         if attendance_instance:
+             attendance_instance.delete()
+
+         input_instance.delete()
+
+
+     return redirect('ias:ai_detail', ai_id=ai_id)
 
 
 @login_required(login_url='common:login')

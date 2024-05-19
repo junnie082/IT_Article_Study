@@ -2,16 +2,11 @@
 {% load ias_filter %}
 
 {% block content %}
-<div class="container my-3">
-    <div class="row my-3">
-        <div class="col-md-6">
-            <div class="input-group">
-            </div>
-        </div>
-    </div>
+<div class="container">
+     <h1>Attendance List</h1>
     <table class="table">
         <thead>
-            <tr class="text-center table-dark">
+            <tr>
                 <th>Week</th>
                 <th>Article</th>
                 <th>Due Date</th>
@@ -22,22 +17,22 @@
         </thead>
         <tbody>
         {% if rowData %}
-        {% for id, article, due_date, attendance_values in rowData %}
-        <tr class="text-center">
-            <td>{{ forloop.counter }}</td>
-            <td><a href="{% url 'ias:ai_detail' id %}">{{ article }}</a></td>
-            <td>{{ due_date|add_days:7 }}</td>
-            {% for value in attendance_values %}
-            <td>
-                {% if value %}
-                <a>O</a>
-                {% else %}
-                <a>X</a>
-                {% endif %}
-            </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
+        {% for attendance in page_obj %}
+         <tr>
+             <td>{{ attendance.0 }}</td>
+             <td><a href="{% url 'ias:ai_detail' attendance.0 %}">{{ attendance.1 }}</a></td>
+             <td>{{ attendance.2 }}</td>
+             {% for value in attendance.3 %}
+             <td>
+                 {% if value %}
+                 <a>O</a>
+                 {% else %}
+                 <a>X</a>
+                 {% endif %}
+             </td>
+             {% endfor %}
+         </tr>
+         {% endfor %}
         {% else %}
         <tr>
             <td colspan="4">There's no Attendance.</td>
@@ -45,49 +40,29 @@
         {% endif %}
         </tbody>
     </table>
-    <!-- Pagination -->
-    <ul class="pagination justify-content-center">
-        <!-- Previous Page -->
-        {% if ai_list.has_previous %}
-        <li class="page-item">
-            <a class="page-link" data-page="{{ ai_list.previous_page_number }}" href="javascript:void(0)">Previous</a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">Previous</a>
-        </li>
-        {% endif %}
-        <!-- Page Numbers -->
-        {% for page_number in ai_list.paginator.page_range %}
-        {% if page_number >= ai_list.number|add:-5 and page_number <= ai_list.number|add:5 %}
-        {% if page_number == ai_list.number %}
-        <li class="page-item active" aria-current="page">
-            <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
-        </li>
-        {% else %}
-        <li class="page-item">
-            <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
-        </li>
-        {% endif %}
-        {% endif %}
-        {% endfor %}
-        <!-- Next Page -->
-        {% if ai_list.has_next %}
-        <li class="page-item">
-            <a class="page-link" data-page="{{ ai_list.next_page_number }}" href="javascript:void(0)">Next</a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">Next</a>
-        </li>
-        {% endif %}
-    </ul>
+
+    <!-- Pagination links -->
+     <div class="pagination justify-content-center">
+         <span class="step-links">
+             {% if page_obj.has_previous %}
+                 <a href="?page=1">&laquo; first</a>
+                 <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+             {% endif %}
+
+             <span class="current">
+                 Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+             </span>
+
+             {% if page_obj.has_next %}
+                 <a href="?page={{ page_obj.next_page_number }}">next</a>
+                 <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+             {% endif %}
+         </span>
+     </div>
+ </div>
+
 </div>
 
-<form id="searchForm" method="get" action="{% url 'ai_index' %}">
-    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
-    <input type="hidden" id="page" name="page" value="{{ page }}">
-</form>
 
 {% endblock %}
 
