@@ -9,7 +9,7 @@ def create_attendance(ai):
 
 
 def update_attendance(input):
-    week = input.ai.pk
+    week = input.ai.id
     user = input.author  # Assuming user is logged in
 
     # Check if there is an existing Attendance instance for the given week and user

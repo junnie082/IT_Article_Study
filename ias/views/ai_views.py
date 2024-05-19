@@ -27,4 +27,9 @@ def ai_create(request):
         create_date=timezone.now()
     )
 
+    create_attendance(ai)
+    # print('subject: ' + str(subject) + 'content: '+ str(content))
+    # You can print the content if needed
+    # print(ai.content)
+
     return redirect('ias:ai_index')

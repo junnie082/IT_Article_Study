@@ -13,7 +13,6 @@ def getAttendance(ai_list):
 
     users = User.objects.all()
     attend = Attendance.objects.all()
-    print('attend: ' + str(attend))
     due_dates = []
 
     for ai in ai_list:
@@ -31,7 +30,6 @@ def getAttendance(ai_list):
 
         attendance_list.append(article_attendance)
 
-    print('attendance_list; ' + str(attendance_list))
     return attendance_list, due_dates
 
 
