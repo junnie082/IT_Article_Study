@@ -108,11 +108,19 @@
         <form action="{% url 'ias:input_create' ai.id %}" method="post" class="my-3">
             {% csrf_token %}
             {% include "form_errors.html" %}
+
             <div class="mb-3">
                 <label for="content" class="form-label">Input</label>
+                {% if ai.pk < recentWeek %}
                 <textarea {% if not user.is_authenticated %}disabled{% endif %}
-                          name="content" id="content" class="form-control" rows="5"></textarea>
+                          name="content" id="content" class="form-control" rows="5" disabled></textarea>
+                {% else %}
+                <textarea {% if not user.is_authenticated %}disabled{% endif %}
+                          name="content" id="content2" class="form-control" rows="5"></textarea>
+                {% endif %}
+
             </div>
+
             <input type="submit" value="Submit Assignment" class="btn btn-primary">
         </form>
         <!-- Responses -->
