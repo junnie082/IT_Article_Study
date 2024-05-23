@@ -18,6 +18,7 @@ def ai_create(request):
     text = createCompletion(topic).choices[0].message.content
 
     paragraphs = createText(text)
+    print('paragraphs[1]: ' + paragraphs[1])
     # Create an instance of the AI model and populate it with the response
     ai = AI.objects.create(
         engSubject=paragraphs[0],

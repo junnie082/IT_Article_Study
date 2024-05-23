@@ -24,4 +24,5 @@ urlpatterns = [
     path('', base_views.ai_index, name='ai_index'),
     path('attendance', include('attendance.urls')),
     path('discussion/', include('discussion.urls')),
+    path('transcribe-audio/', include('voice.urls'))
 ]
