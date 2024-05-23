@@ -4,11 +4,33 @@ from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.utils import timezone
 
 from attendance.models import Attendance
+# from voice.function.voice import get_speech
 from ..forms import InputForm
 from attendance.function.attendance import create_attendance, update_attendance
 from ..function.cmpStrings import chkErrors, cmpInputArticle
 from ..models import Input, AI
 
+# @login_required(login_url='common:login')
+# def input_create(request, ai_id):
+#     ai = get_object_or_404(AI, pk=ai_id)
+#     if request.method == 'POST':
+#         form = InputForm(request.POST)
+#         if form.is_valid():
+#             input.author = request.user
+#             input.create_date = timezone.now()
+#             input.ai = ai
+#             input.errCheckStr = ' '.join(chkErrors(get_speech(), ai.engContent))
+#             speech = get_speech()
+#             input.isTheSame = cmpInputArticle(speech, ai.engContent)
+#             update_attendance(input)
+#             input.save()
+#             return redirect('{}#input_{}'.format(
+#                 resolve_url('ias:ai_detail', ai_id=ai.id), input.id
+#             ))
+#         else:
+#             form = InputForm()
+#     context = {'ai': ai, 'form': form}
+#     return render(request, 'ias/ai_detail.html', context)
 
 @login_required(login_url='common:login')
 def input_create(request, ai_id):

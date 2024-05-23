@@ -1,6 +1,9 @@
 def preprocess_text(text):
     # Replace curly apostrophes with straight apostrophes
-    return text.replace('’', "'")
+    text = text.replace('’', "'")
+    # Remove commas
+    text = text.replace(',', '')
+    return text
 
 
 def cmpInputArticle(input, article):
