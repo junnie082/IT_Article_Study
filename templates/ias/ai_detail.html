@@ -19,11 +19,7 @@
         <div class="card-body">
             <div class="card-text">
                 {{ai.engContent}}
-<!--                {% for word in ai.engContent %}-->
-<!--                    <pre-wrap href="#" class="word-link">{{ word }}</pre-wrap>-->
-<!--                {% endfor %}-->
             </div>
-
             <div class="d-flex justify-content-end">
             </div>
             <div class="my-3">
@@ -35,24 +31,24 @@
         <input type="checkbox" id="toggleTranslationBtn" class="toggle-input visually-hidden">
         <label for="toggleTranslationBtn" class="toggle-label btn btn-outline-primary">Toggle Translation</label>
 
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" href="#" onclick="showDiscussion()">Discussion</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#" onclick="showInput(); document.querySelector('.nav-link.active').classList.remove('active');">Assignment</a>
-        </li>
-    </ul>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" onclick="showDiscussion()">Discussion</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showInput(); document.querySelector('.nav-link.active').classList.remove('active');">Assignment</a>
+            </li>
+        </ul>
     </div>
 
     <!-- Discussion and Input Section -->
-    <div class="discussion-prompt" style="display: none;">
+    <div class="discussion-prompt" style="display: block;">
         <!-- Display existing comments -->
         <div class="existing-comments mt-3">
             <h4 class="border-bottom my-3 py-2">{{ ai.opinion_set.count }} Opinions</h4>
             <ul>
                 {% if ai.opinion_set.all %}
-                    {% for opinion in ai.opinion_set.all reversed%}
+                    {% for opinion in ai.opinion_set.all reversed %}
                         <a id="opinion_{{ opinion.id }}"></a>
                         <div class="card my-1">
                             <div class="card-body">
@@ -96,45 +92,27 @@
             {% csrf_token %}
             <!-- Add your discussion form fields here -->
             <div class="mb-3">
-<!--                <label for="comment" class="form-label">Discussion</label>-->
                 <textarea name="comment" id="comment" class="form-control" rows="5"></textarea>
             </div>
             <input type="submit" value="Submit Discussion" class="btn btn-primary">
         </form>
-
     </div>
 
-<!-- Audio recording and transcription -->
-<div class="container my-3">
-    <button id="recordBtn" class="btn btn-primary">Record</button>
-    <!-- Button to stop recording (initially hidden) -->
-    <button id="stopBtn" class="btn btn-danger" style="display: none;">Stop</button>
+    <!-- Audio recording and transcription -->
+    <div class="container my-3" id="audioSection" style="display: none;">
+        <button id="recordBtn" class="btn btn-primary">Record</button>
+        <!-- Button to stop recording (initially hidden) -->
+        <button id="stopBtn" class="btn btn-danger" style="display: none;">Stop</button>
 
-    <!-- Div to display transcription result -->
-    <div id="transcriptionResult" class="mt-3"></div>
-</div>
-
+        <!-- Div to display transcription result -->
+        <div id="transcriptionResult" class="mt-3"></div>
+    </div>
 
     <!-- Input prompt -->
     <div class="input-prompt" style="display: none;">
         <form action="{% url 'ias:input_create' ai.id %}" method="post" class="my-3">
             {% csrf_token %}
             {% include "form_errors.html" %}
-
-            <div class="mb-3">
-                <label for="content" class="form-label">Input</label>
-                {% if ai.pk < recentWeek %}
-                <textarea {% if not user.is_authenticated %}disabled{% endif %}
-                          name="content" id="content" class="form-control" rows="5" disabled></textarea>
-                {% else %}
-                <textarea {% if not user.is_authenticated %}disabled{% endif %}
-                          name="content" id="content2" class="form-control" rows="5"></textarea>
-                {% endif %}
-
-            </div>
-
-
-            <input type="submit" value="Submit Assignment" class="btn btn-primary">
         </form>
         <!-- Responses -->
         <h4 class="border-bottom my-3 py-2">{{ai.input_set.count}} Responses</h4>
@@ -148,7 +126,8 @@
                     <pre class="pre-wrap">{{ input.errCheckedStr|mark }}</pre>
                     {% elif input.content %}
                     <pre class="pre-wrap">{{ input.content|mark }}</pre>
-                    {% endif %}</div>
+                    {% endif %}
+                </div>
                 <div class="d-flex justify-content-end">
                     {% if input.modify_date %}
                     <div class="badge bg-light text-dark p-2 text-start mx-3">
@@ -167,7 +146,7 @@
                         <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
                     </a>
                     {% if request.user == input.author %}
-                    <a href="{% url 'ias:input_modify' input.id  %}"
+                    <a href="{% url 'ias:input_modify' input.id %}"
                        class="btn btn-sm btn-outline-secondary">Edit</a>
                     <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
                        data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
@@ -200,7 +179,7 @@
                         <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
                     </a>
                     {% if request.user == input.author %}
-                    <a href="{% url 'ias:input_modify' input.id  %}"
+                    <a href="{% url 'ias:input_modify' input.id %}"
                        class="btn btn-sm btn-outline-secondary">Edit</a>
                     <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
                        data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
@@ -215,7 +194,197 @@
 </div>
 
 {% endblock content %}
+
 {% block script %}
+
+<script type='text/javascript'>
+    // Translation Function.
+    // Get references to the toggle button and subject/content display elements
+    const toggleButton = document.getElementById('toggleTranslationBtn');
+    const subjectDisplay = document.getElementById('subjectDisplay');
+    const contentDisplay = document.querySelector('.card-text');
+    const toggleLabel = document.querySelector('.toggle-label');
+    const responseSection = document.getElementById('responseSection');
+    const discussionSection = document.getElementById('discussionSection'); // Added reference for discussion section
+
+    // Initial values for subject and content
+    const engSubject = "{{ ai.engSubject }}";
+    const korSubject = "{{ ai.korSubject }}";
+    const engContent = "{{ ai.engContent|mark }}";
+    const korContent = "{{ ai.korContent|mark }}";
+
+    // Set the initial subject and content display
+    subjectDisplay.textContent = engSubject;
+    contentDisplay.innerHTML = engContent;
+
+    // Set the initial label text
+    toggleLabel.textContent = "Korean";
+
+    // Function to prevent copying
+    function preventCopy(event) {
+        event.preventDefault();
+        alert('Copying is disabled in English Mode.');
+    }
+
+    // Initially disable copying
+    document.addEventListener('copy', preventCopy);
+
+    // Function to show or hide responses based on toggle state
+    function toggleResponses() {
+        console.log("Toggle button checked:", toggleButton.checked);
+        if (toggleButton.checked) {
+            responseSection.style.display = "block";
+            console.log("Responses shown");
+        } else {
+            responseSection.style.display = "none";
+            console.log("Responses hidden");
+        }
+    }
+
+    // Function to show or hide discussion section based on toggle state
+    // Add event listener to the toggle button
+    toggleButton.addEventListener('change', function() {
+        // Update the subject and content display based on the toggle state
+        if (toggleButton.checked) {
+            subjectDisplay.textContent = korSubject;
+            contentDisplay.innerHTML = korContent;
+            toggleLabel.textContent = "English";
+            // Enable copying when in Korean mode
+            document.removeEventListener('copy', preventCopy);
+        } else {
+            subjectDisplay.textContent = engSubject;
+            contentDisplay.innerHTML = engContent;
+            toggleLabel.textContent = "Korean";
+            // Disable copying when in English mode
+            document.addEventListener('copy', preventCopy);
+        }
+        // Show or hide responses based on toggle state
+        toggleResponses();
+    });
+
+    // Function to show the discussion section and hide the input section
+    function showDiscussion() {
+        document.querySelector('.discussion-prompt').style.display = 'block';
+        document.querySelector('.input-prompt').style.display = 'none';
+        document.getElementById('audioSection').style.display = 'none';
+    }
+
+    // Function to show the input section and hide the discussion section
+    function showInput() {
+        document.querySelector('.discussion-prompt').style.display = 'none';
+        document.querySelector('.input-prompt').style.display = 'block';
+        document.getElementById('audioSection').style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle the translation toggle
+        const toggleTranslationBtn = document.getElementById('toggleTranslationBtn');
+        toggleTranslationBtn.addEventListener('change', function() {
+            if (this.checked) {
+                showTranslation();
+            } else {
+                hideTranslation();
+            }
+        });
+
+        // Show discussion section by default
+        showDiscussion();
+    });
+
+    function showTranslation() {
+        document.querySelectorAll('.korean').forEach(function(el) {
+            el.style.display = 'inline';
+        });
+    }
+
+    function hideTranslation() {
+        document.querySelectorAll('.korean').forEach(function(el) {
+            el.style.display = 'none';
+        });
+    }
+
+    function handleWordClick(word) {
+        fetchTranslation(word);
+    }
+
+    function fetchTranslation(word) {
+        const apiUrl = `{% url 'voice:transcribe_audio' ai.pk %}?word=${encodeURIComponent(word)}`;
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                alert(data.translation);
+            })
+            .catch(error => {
+                console.error('Error fetching translation:', error);
+            });
+    }
+
+    // Audio upload and transcription
+    function uploadAndTranscribeAudio() {
+        const audioFile = document.getElementById('audioUpload').files[0];
+        const formData = new FormData();
+        formData.append('audio', audioFile);
+
+        fetch('{% url "voice:transcribe_audio" ai.pk %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const transcriptionResult = document.getElementById('transcriptionResult');
+            if (data.success) {
+                transcriptionResult.innerHTML = `<pre>${data.transcription}</pre>`;
+            } else {
+                transcriptionResult.innerHTML = `<p>Error: ${data.error}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading or transcribing audio:', error);
+        });
+    }
+
+    // Attach event listeners to delete buttons
+    document.querySelectorAll('.delete').forEach(button => {
+        button.addEventListener('click', function() {
+            const uri = this.getAttribute('data-uri');
+            fetch(uri, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to delete');
+                }
+            });
+        });
+    });
+
+    // Attach event listeners to recommend buttons
+    document.querySelectorAll('.recommend').forEach(button => {
+        button.addEventListener('click', function() {
+            const uri = this.getAttribute('data-uri');
+            fetch(uri, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to recommend');
+                }
+            });
+        });
+    });
+</script>
+
 <script>
     document.getElementById('recordBtn').addEventListener('click', function() {
         // Show the stop button and hide the record button
@@ -263,8 +432,7 @@
             document.getElementById('recordBtn').style.display = '';
         });
     });
-</script>
-<script>
+
     document.addEventListener('DOMContentLoaded', function() {
         // Handle the translation toggle
         const toggleTranslationBtn = document.getElementById('toggleTranslationBtn');
@@ -275,6 +443,9 @@
                 hideTranslation();
             }
         });
+
+        // Show discussion section by default
+        showDiscussion();
     });
 
     function showTranslation() {
@@ -292,11 +463,13 @@
     function showDiscussion() {
         document.querySelector('.discussion-prompt').style.display = 'block';
         document.querySelector('.input-prompt').style.display = 'none';
+        document.getElementById('audioSection').style.display = 'none';
     }
 
     function showInput() {
         document.querySelector('.discussion-prompt').style.display = 'none';
         document.querySelector('.input-prompt').style.display = 'block';
+        document.getElementById('audioSection').style.display = 'block';
     }
 
     function handleWordClick(word) {
