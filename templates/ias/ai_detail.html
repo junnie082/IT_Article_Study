@@ -102,19 +102,18 @@
     <div class="container my-3" id="audioSection" style="display: none;">
         <button id="recordBtn" class="btn btn-primary">Record</button>
         <!-- Button to stop recording (initially hidden) -->
-        <button id="stopBtn" class="btn btn-danger" style="display: none;">Stop</button>
+        <button id="stopBtn" type="submit" class="btn btn-danger" style="display: none;">Stop</button>
 
         <!-- Div to display transcription result -->
         <div id="transcriptionResult" class="mt-3"></div>
     </div>
 
+
     <!-- Input prompt -->
     <div class="input-prompt" style="display: none;">
-        <form action="{% url 'ias:input_create' ai.id %}" method="post" class="my-3">
-            {% csrf_token %}
-            {% include "form_errors.html" %}
-        </form>
         <!-- Responses -->
+
+
         <h4 class="border-bottom my-3 py-2">{{ai.input_set.count}} Responses</h4>
         {% for input in ai.input_set.all reversed %}
         <a id="input_{{ input.id }}"></a>
@@ -219,15 +218,6 @@
 
     // Set the initial label text
     toggleLabel.textContent = "Korean";
-
-    // Function to prevent copying
-    function preventCopy(event) {
-        event.preventDefault();
-        alert('Copying is disabled in English Mode.');
-    }
-
-    // Initially disable copying
-    document.addEventListener('copy', preventCopy);
 
     // Function to show or hide responses based on toggle state
     function toggleResponses() {
@@ -489,32 +479,6 @@
     }
 
     // Audio upload and transcription
-    function uploadAndTranscribeAudio() {
-        const audioFile = document.getElementById('audioUpload').files[0];
-        const formData = new FormData();
-        formData.append('audio', audioFile);
-
-        fetch('{% url "voice:transcribe_audio" ai.pk %}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const transcriptionResult = document.getElementById('transcriptionResult');
-            if (data.success) {
-                transcriptionResult.innerHTML = `<pre>${data.transcription}</pre>`;
-            } else {
-                transcriptionResult.innerHTML = `<p>Error: ${data.error}</p>`;
-            }
-        })
-        .catch(error => {
-            console.error('Error uploading or transcribing audio:', error);
-        });
-    }
-
     // Attach event listeners to delete buttons
     document.querySelectorAll('.delete').forEach(button => {
         button.addEventListener('click', function() {
