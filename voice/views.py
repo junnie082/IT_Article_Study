@@ -12,7 +12,7 @@ from openai import OpenAI
 
 from attendance.function.attendance import update_attendance
 from ias.forms import InputForm
-from ias.function.cmpStrings import chkErrors
+from ias.function.cmpStrings import chkErrors, cmpInputArticle
 from ias.models import AI, Input
 
 # Load environment variables
@@ -72,8 +72,9 @@ def transcribe_audio(request, ai_id):
             create_date=timezone.now(),
             content=text_result,
             ai=ai,
-            errCheckedStr=' '.join(chkErrors(text_result, ai.engContent))
+            errCheckedStr=' '.join(chkErrors(text_result, ai.engContent)),
         )
+        input.isTheSame=cmpInputArticle(input.content, ai.engContent)
         update_attendance(input)
         print('input.errCheckstr: ' + str(input.errCheckedStr))
         input.save()

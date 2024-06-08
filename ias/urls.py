@@ -16,8 +16,8 @@ urlpatterns = [
          ai_views.ai_create, name='ai_create'),
 
     # input_views.py
-    path('input/create/<int:ai_id>/',
-         input_views.input_create, name='input_create'),
+    # path('input/create/<int:ai_id>/',
+    #      input_views.input_create, name='input_create'),
     path('input/modify/<int:input_id>/',
          input_views.input_modify, name='input_modify'),
     path('input/delete/<int:input_id>/',

@@ -33,28 +33,6 @@ from ..models import Input, AI
 #     return render(request, 'ias/ai_detail.html', context)
 
 @login_required(login_url='common:login')
-def input_create(request, ai_id):
-    ai = get_object_or_404(AI, pk=ai_id)
-    if request.method == 'POST':
-        form = InputForm(request.POST)
-        if form.is_valid():
-            input = form.save(commit=False)
-            input.author = request.user # author 속성에 로그인 계정 저장
-            input.create_date = timezone.now()
-            input.ai = ai
-            input.errCheckedStr = ' '.join(chkErrors(input.content, ai.engContent))
-            input.isTheSame = cmpInputArticle(input.content, ai.engContent)
-            update_attendance(input)
-            input.save()
-            return redirect('{}#input_{}'.format(
-                resolve_url('ias:ai_detail', ai_id=ai.id), input.id
-            ))
-    else:
-        form = InputForm()
-    context = {'ai': ai, 'form': form}
-    return render(request, 'ias/ai_detail.html', context)
-
-@login_required(login_url='common:login')
 def input_modify(request, input_id):
     input = get_object_or_404(Input, pk=input_id)
     if request.user != input.author:
