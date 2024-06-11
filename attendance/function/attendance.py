@@ -3,6 +3,9 @@ from datetime import timedelta
 from attendance.models import Attendance
 from django.utils import timezone
 
+from ias.function.cmpStrings import get_at_count
+from ias.models import AI
+
 
 def create_attendance(ai):
     existing_attendance = Attendance.objects.create(week=ai.id, due_date=timezone.now() + timedelta(days=7))
@@ -14,7 +17,6 @@ def update_attendance(input):
 
     # Check if there is an existing Attendance instance for the given week and user
     existing_attendance = Attendance.objects.filter(week=week, user=user).first()
-
     if existing_attendance:
         # If an existing instance is found, update it
         existing_attendance.attended = input.isTheSame
@@ -22,4 +24,5 @@ def update_attendance(input):
     else:
         # If no existing instance is found, create a new one
         Attendance.objects.create(week=week, user=user, attended=input.isTheSame, due_date=timezone.now() + timedelta(days=7))
+
 

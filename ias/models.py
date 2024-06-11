@@ -18,6 +18,7 @@ class Input(models.Model):
     ai = models.ForeignKey(AI, on_delete=models.CASCADE)
     content = models.TextField(null=True)
     isTheSame = models.BooleanField(null=True)
+    hit = models.FloatField(null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='author_input')
     create_date = models.DateTimeField(null=True)
     modify_date = models.DateTimeField(null=True, blank=True)

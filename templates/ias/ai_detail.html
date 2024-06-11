@@ -112,8 +112,6 @@
     <!-- Input prompt -->
     <div class="input-prompt" style="display: none;">
         <!-- Responses -->
-
-
         <h4 class="border-bottom my-3 py-2">{{ai.input_set.count}} Responses</h4>
         {% for input in ai.input_set.all reversed %}
         <a id="input_{{ input.id }}"></a>
