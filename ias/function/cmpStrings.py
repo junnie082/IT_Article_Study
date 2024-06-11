@@ -20,10 +20,12 @@ def cmpInputArticle(input_text, article_text):
     return False
 
 def cal_hit(input):
-    at_count = get_at_count()
-    article_text = preprocess_text(input.ai.engContent)
-    print("at_count: " +str(at_count) + "len(article_text): " + str(len(article_text)))
-    return round((at_count/len(article_text)) * 100, 2)
+    input_processed = input.errCheckedStr.replace(' ', '')
+    article_processed = preprocess_text(input.ai.engContent)
+    at_count = input_processed.count("@")
+    len_article = len(article_processed)
+    print("at_count: " + str(at_count) + "len_article: " + str(len_article))
+    return round((len_article - at_count) / len_article * 100, 2)
 
 
 at_count = 0
@@ -68,8 +70,6 @@ def chkErrors(input, article):
 
     return returnList, at_count  # Return the list and the count of "@"
 
-def get_at_count():
-    return at_count
 
 # Example usage
 input_text = "This is a sample input"

@@ -7,11 +7,9 @@ from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, resolve_url, render
 from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
-import openai
 from openai import OpenAI
 
 from attendance.function.attendance import update_attendance
-from ias.forms import InputForm
 from ias.function.cmpStrings import chkErrors, cmpInputArticle, cal_hit
 from ias.models import AI, Input
 
@@ -63,26 +61,14 @@ except OSError as e:
 # Close the PyAudio instance
 p.terminate()
 
+def find_device_index(p, device_name):
+    for i in range(p.get_device_count()):
+        info = p.get_device_info_by_index(i)
+        if device_name in info.get('name'):
+            return i
+    return None
 
-# ai = get_object_or_404(AI, pk=ai_id)
-# if request.method == 'POST':
-#     form = InputForm(request.POST)
-#     if form.is_valid():
-#         input = form.save(commit=False)
-#         input.author = request.user  # author 속성에 로그인 계정 저장
-#         input.create_date = timezone.now()
-#         input.ai = ai
-#         input.errCheckedStr = ' '.join(chkErrors(input.content, ai.engContent))
-#         input.isTheSame = cmpInputArticle(input.content, ai.engContent)
-#         update_attendance(input)
-#         input.save()
-#         return redirect('{}#input_{}'.format(
-#             resolve_url('ias:ai_detail', ai_id=ai.id), input.id
-#         ))
-# else:
-#     form = InputForm()
-# context = {'ai': ai, 'form': form}
-# return render(request, 'ias/ai_detail.html', context)
+p = pyaudio.PyAudio()
 
 
 @csrf_exempt
@@ -129,7 +115,18 @@ def interrupt(request):
 
 def record_audio():
     print('Recording audio...')
-    stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+
+    # Find the device index for the desired input device
+    device_name = "외장 마이크"  # Replace with the name of your input device
+    device_index = find_device_index(audio, device_name)
+
+    if device_index is None:
+        print(f"Input device '{device_name}' not found.")
+        return None
+
+    # Open the stream using the specified input device
+    stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK,
+                        input_device_index=device_index)
     frames = []
 
     # Check for interruption while recording
