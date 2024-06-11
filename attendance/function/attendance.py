@@ -3,7 +3,6 @@ from datetime import timedelta
 from attendance.models import Attendance
 from django.utils import timezone
 
-from ias.function.cmpStrings import get_at_count
 from ias.models import AI
 
 
