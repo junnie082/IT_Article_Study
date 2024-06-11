@@ -12,7 +12,7 @@ from openai import OpenAI
 
 from attendance.function.attendance import update_attendance
 from ias.forms import InputForm
-from ias.function.cmpStrings import chkErrors, cmpInputArticle
+from ias.function.cmpStrings import chkErrors, cmpInputArticle, cal_hit
 from ias.models import AI, Input
 
 # Load environment variables
@@ -33,6 +33,36 @@ WAVE_OUTPUT_FILENAME = "output.wav"
 
 # Global variable to track interruption status
 interrupted = False
+
+# Initialize PyAudio
+p = pyaudio.PyAudio()
+
+# Function to print device information
+def print_device_info():
+    for i in range(p.get_device_count()):
+        info = p.get_device_info_by_index(i)
+        print(f"Device {i}: {info['name']}, Max Input Channels: {info['maxInputChannels']}, Max Output Channels: {info['maxOutputChannels']}")
+
+# Print device information to determine the supported number of channels
+print_device_info()
+
+# Specify the device index and the correct number of channels
+device_index = 0  # Replace with your device index
+num_channels = 1  # Replace with the supported number of channels for your device
+
+try:
+    stream = p.open(format=pyaudio.paInt16,
+                    channels=num_channels,
+                    rate=44100,
+                    input=True,
+                    input_device_index=device_index)
+    print("Stream opened successfully!")
+except OSError as e:
+    print(f"Could not open stream: {e}")
+
+# Close the PyAudio instance
+p.terminate()
+
 
 # ai = get_object_or_404(AI, pk=ai_id)
 # if request.method == 'POST':
@@ -65,6 +95,7 @@ def transcribe_audio(request, ai_id):
     text_result = str(text_result)
     print('text_result: ' + text_result)
 
+
     if request.method == 'POST':
         print('Form is valid')  # Check if the form is valid
         input=Input.objects.create(
@@ -72,9 +103,11 @@ def transcribe_audio(request, ai_id):
             create_date=timezone.now(),
             content=text_result,
             ai=ai,
-            errCheckedStr=' '.join(chkErrors(text_result, ai.engContent)),
+            errCheckedStr=' '.join(chkErrors(text_result, ai.engContent)[0]),
         )
         input.isTheSame=cmpInputArticle(input.content, ai.engContent)
+        input.hit = cal_hit(input)
+
         update_attendance(input)
         print('input.errCheckstr: ' + str(input.errCheckedStr))
         input.save()

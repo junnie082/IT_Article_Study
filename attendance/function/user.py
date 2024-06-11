@@ -10,14 +10,16 @@ def getUsers():
 
 def getAttendance(ai_list):
     attendance_list = []
+    hit_list = []
+    due_dates = []
 
     users = User.objects.all()
     attend = Attendance.objects.all()
-    due_dates = []
 
     for ai in ai_list:
         article_attendance = []
         due_dates.append(ai.create_date)
+
         for user in users:
             # Find the attendance record for the current article and user
             attendance_record = attend.filter(week=ai.id, user=user).first()
@@ -29,6 +31,7 @@ def getAttendance(ai_list):
                 article_attendance.append(False)
 
         attendance_list.append(article_attendance)
+
 
     return attendance_list, due_dates
 

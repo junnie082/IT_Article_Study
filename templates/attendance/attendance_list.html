@@ -16,28 +16,29 @@
             </tr>
         </thead>
         <tbody>
-        {% if rowData %}
-        {% for attendance in page_obj %}
-         <tr>
-             <td>{{ attendance.0 }}</td>
-             <td><a href="{% url 'ias:ai_detail' attendance.0 %}">{{ attendance.1 }}</a></td>
-             <td>{{ attendance.2|add_days:7 }}</td>
-             {% for value in attendance.3 %}
-             <td>
-                 {% if value %}
-                 <a>O</a>
-                 {% else %}
-                 <a>X</a>
-                 {% endif %}
-             </td>
-             {% endfor %}
-         </tr>
-         {% endfor %}
+        {% if page_obj %}
+            {% for attendance in page_obj %}
+            <tr>
+                <td>{{ attendance.0 }}</td>
+                <td><a href="{% url 'ias:ai_detail' attendance.0 %}">{{ attendance.1 }}</a></td>
+                <td>{{ attendance.2|add_days:7 }}</td>
+                {% for hit in attendance.4 %}
+                <td>
+                    {% if hit == 0 or hit is None %}
+                        <t>X</t>
+                    {% else %}
+                        {{ hit }}%
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
         {% else %}
-        <tr>
-            <td colspan="4">There's no Attendance.</td>
-        </tr>
+            <tr>
+                <td colspan="4">There's no Attendance.</td>
+            </tr>
         {% endif %}
+
         </tbody>
     </table>
 
