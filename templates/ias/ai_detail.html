@@ -100,10 +100,13 @@
 
     <!-- Audio recording and transcription -->
     <div class="container my-3" id="audioSection" style="display: none;">
-        <button id="recordBtn" class="btn btn-primary">Record</button>
-        <!-- Button to stop recording (initially hidden) -->
-        <button id="stopBtn" type="submit" class="btn btn-danger" style="display: none;">Stop</button>
-
+        {% if ai.pk < recentWeek %}
+            <button id="recordBtn" class="btn btn-primary" disabled>Record</button>
+        {% else %}
+            <button id="recordBtn2" class="btn btn-primary">Record</button>
+            <!-- Button to stop recording (initially hidden) -->
+        {% endif %}
+            <button id="stopBtn" type="submit" class="btn btn-danger" style="display: none;">Stop</button>
         <!-- Div to display transcription result -->
         <div id="transcriptionResult" class="mt-3"></div>
     </div>
