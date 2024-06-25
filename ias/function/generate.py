@@ -20,7 +20,7 @@ def createCompletion(topic):
                         "The title should be wrapped in {}, and content should be wrapped in [] for both English and Korean paragraphs." \
                         "First paragraph is { title } content" \
                         "Second paragraph is { 제목 } 내용 and should be wrapped in the [ ].  " \
-                        "Each paragraph has 2~3 lines. " \
+                        "Each paragraph has 7 lines. " \
                         % topic}
         ]
     )

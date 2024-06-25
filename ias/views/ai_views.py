@@ -22,7 +22,7 @@ def ai_create(request):
     # Create an instance of the AI model and populate it with the response
     ai = AI.objects.create(
         engSubject=paragraphs[0],
-        engContent=paragraphs[1].replace('-', ' '),
+        engContent=paragraphs[1].replace('-', ' ').replace('/', ' '),
         korSubject=paragraphs[2],  # You can set the subject as needed
         korContent=paragraphs[3].replace('-', ' '),
         create_date=timezone.now()
