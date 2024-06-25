@@ -72,12 +72,6 @@
                                        class="recommend btn btn-sm btn-outline-secondary"> Recommend
                                         <span class="badge rounded-pill bg-success">{{opinion.voter.count}}</span>
                                     </a>
-                                    {% if request.user == opinion.author %}
-                                    <a href="{% url 'discussion:opinion_modify' opinion.id  %}"
-                                       class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
-                                       data-uri="{% url 'discussion:opinion_delete' opinion.id  %}">Delete</a>
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -101,9 +95,9 @@
     <!-- Audio recording and transcription -->
     <div class="container my-3" id="audioSection" style="display: none;">
         {% if ai.pk < recentWeek %}
-            <button id="recordBtn" class="btn btn-primary" disabled>Record</button>
+            <button id="recordBtn2" class="btn btn-primary" disabled>Record</button>
         {% else %}
-            <button id="recordBtn2" class="btn btn-primary">Record</button>
+            <button id="recordBtn" class="btn btn-primary">Record</button>
             <!-- Button to stop recording (initially hidden) -->
         {% endif %}
             <button id="stopBtn" type="submit" class="btn btn-danger" style="display: none;">Stop</button>
@@ -145,12 +139,6 @@
                        class="recommend btn btn-sm btn-outline-secondary"> Recommend
                         <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
                     </a>
-                    {% if request.user == input.author %}
-                    <a href="{% url 'ias:input_modify' input.id %}"
-                       class="btn btn-sm btn-outline-secondary">Edit</a>
-                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
-                       data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
-                    {% endif %}
                 </div>
                 {% else %}
                 <!-- Handle the case when input.isTheSame is false -->
@@ -178,12 +166,6 @@
                        class="recommend btn btn-sm btn-outline-secondary"> Recommend
                         <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
                     </a>
-                    {% if request.user == input.author %}
-                    <a href="{% url 'ias:input_modify' input.id %}"
-                       class="btn btn-sm btn-outline-secondary">Edit</a>
-                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
-                       data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
-                    {% endif %}
                 </div>
                 {% endif %}
             </div>

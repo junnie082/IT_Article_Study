@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from attendance.function.attendance import update_attendance
-from ias.function.cmpStrings import chkErrors, cmpInputArticle, cal_hit
+from ias.function.cmpStrings import chkErrors, cmp_input_article, cal_hit
 from ias.models import AI, Input
 
 # Load environment variables
@@ -19,8 +19,6 @@ load_dotenv()
 # Set up OpenAI API key
 API_KEY = os.getenv("OPEN_AI_API_KEY")
 client = OpenAI(api_key=API_KEY)
-
-audio = pyaudio.PyAudio()
 
 # Define constants for audio recording
 FORMAT = pyaudio.paInt16
@@ -32,34 +30,20 @@ WAVE_OUTPUT_FILENAME = "output.wav"
 # Global variable to track interruption status
 interrupted = False
 
-# Initialize PyAudio
-p = pyaudio.PyAudio()
 
 # Function to print device information
 def print_device_info():
+    p = pyaudio.PyAudio()
     for i in range(p.get_device_count()):
         info = p.get_device_info_by_index(i)
-        print(f"Device {i}: {info['name']}, Max Input Channels: {info['maxInputChannels']}, Max Output Channels: {info['maxOutputChannels']}")
+        print(
+            f"Device {i}: {info['name']}, Max Input Channels: {info['maxInputChannels']}, Max Output Channels: {info['maxOutputChannels']}")
+    p.terminate()
+
 
 # Print device information to determine the supported number of channels
 print_device_info()
 
-# Specify the device index and the correct number of channels
-device_index = 0  # Replace with your device index
-num_channels = 1  # Replace with the supported number of channels for your device
-
-try:
-    stream = p.open(format=pyaudio.paInt16,
-                    channels=num_channels,
-                    rate=44100,
-                    input=True,
-                    input_device_index=device_index)
-    print("Stream opened successfully!")
-except OSError as e:
-    print(f"Could not open stream: {e}")
-
-# Close the PyAudio instance
-p.terminate()
 
 def find_device_index(p, device_name):
     for i in range(p.get_device_count()):
@@ -68,30 +52,32 @@ def find_device_index(p, device_name):
             return i
     return None
 
-p = pyaudio.PyAudio()
-
 
 @csrf_exempt
 def transcribe_audio(request, ai_id):
+    print('transcribe_audio')
     ai = get_object_or_404(AI, pk=ai_id)
     # Record audio from the client-side
     frames = record_audio()
+    if frames is None:
+        return JsonResponse({'status': 'error', 'message': 'Recording device not found or other error occurred'})
+
     # Transcribe the recorded audio to text
     text_result = speech_to_text(frames)
     text_result = str(text_result)
     print('text_result: ' + text_result)
 
-
     if request.method == 'POST':
         print('Form is valid')  # Check if the form is valid
-        input=Input.objects.create(
+        input = Input.objects.create(
             author=request.user,
             create_date=timezone.now(),
             content=text_result,
             ai=ai,
             errCheckedStr=' '.join(chkErrors(text_result, ai.engContent)[0]),
         )
-        input.isTheSame=cmpInputArticle(input.content, ai.engContent)
+        input.errCheckedStr = chkErrors(input.content, ai.engContent.replace('-', ' '))
+        input.isTheSame = cmp_input_article(input.content, ai.engContent)
         input.hit = cal_hit(input)
 
         update_attendance(input)
@@ -116,12 +102,20 @@ def interrupt(request):
 def record_audio():
     print('Recording audio...')
 
+    # Reset the interrupted flag
+    global interrupted
+    interrupted = False
+
+    # Initialize PyAudio instance
+    audio = pyaudio.PyAudio()
+
     # Find the device index for the desired input device
     device_name = "외장 마이크"  # Replace with the name of your input device
     device_index = find_device_index(audio, device_name)
 
     if device_index is None:
         print(f"Input device '{device_name}' not found.")
+        audio.terminate()
         return None
 
     # Open the stream using the specified input device
@@ -130,7 +124,6 @@ def record_audio():
     frames = []
 
     # Check for interruption while recording
-    global interrupted
     while not interrupted:
         data = stream.read(CHUNK)
         frames.append(data)
