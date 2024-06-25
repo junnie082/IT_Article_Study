@@ -27,7 +27,11 @@
                     {% if hit == 0 or hit is None %}
                         <t>X</t>
                     {% else %}
-                        {{ hit }}%
+                        {% if hit > 60 %}
+                            <span style="color: green">{{ hit }}%</span>
+                        {% else %}
+                            <span style="color: red">{{ hit }}%</span>
+                        {% endif %}
                     {% endif %}
                 </td>
                 {% endfor %}
