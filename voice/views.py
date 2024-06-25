@@ -55,6 +55,7 @@ def find_device_index(p, device_name):
 
 @csrf_exempt
 def transcribe_audio(request, ai_id):
+    print('transcribe_audio')
     ai = get_object_or_404(AI, pk=ai_id)
     # Record audio from the client-side
     frames = record_audio()
@@ -75,6 +76,7 @@ def transcribe_audio(request, ai_id):
             ai=ai,
             errCheckedStr=' '.join(chkErrors(text_result, ai.engContent)[0]),
         )
+        input.errCheckedStr = chkErrors(input.content, ai.engContent.replace('-', ' '))
         input.isTheSame = cmp_input_article(input.content, ai.engContent)
         input.hit = cal_hit(input)
 

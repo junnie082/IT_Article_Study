@@ -34,6 +34,7 @@ from ..models import Input, AI
 
 @login_required(login_url='common:login')
 def input_modify(request, input_id):
+    print('input_modify')
     input = get_object_or_404(Input, pk=input_id)
     if request.user != input.author:
         messages.error(request, 'No permission to modify')

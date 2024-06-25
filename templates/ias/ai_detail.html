@@ -72,12 +72,6 @@
                                        class="recommend btn btn-sm btn-outline-secondary"> Recommend
                                         <span class="badge rounded-pill bg-success">{{opinion.voter.count}}</span>
                                     </a>
-                                    {% if request.user == opinion.author %}
-                                    <a href="{% url 'discussion:opinion_modify' opinion.id  %}"
-                                       class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
-                                       data-uri="{% url 'discussion:opinion_delete' opinion.id  %}">Delete</a>
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -145,12 +139,6 @@
                        class="recommend btn btn-sm btn-outline-secondary"> Recommend
                         <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
                     </a>
-                    {% if request.user == input.author %}
-                    <a href="{% url 'ias:input_modify' input.id %}"
-                       class="btn btn-sm btn-outline-secondary">Edit</a>
-                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
-                       data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
-                    {% endif %}
                 </div>
                 {% else %}
                 <!-- Handle the case when input.isTheSame is false -->
@@ -178,12 +166,6 @@
                        class="recommend btn btn-sm btn-outline-secondary"> Recommend
                         <span class="badge rounded-pill bg-success">{{input.voter.count}}</span>
                     </a>
-                    {% if request.user == input.author %}
-                    <a href="{% url 'ias:input_modify' input.id %}"
-                       class="btn btn-sm btn-outline-secondary">Edit</a>
-                    <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary "
-                       data-uri="{% url 'ias:input_delete' input.id  %}">Delete</a>
-                    {% endif %}
                 </div>
                 {% endif %}
             </div>

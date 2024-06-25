@@ -25,7 +25,8 @@ def cmp_input_article(input_text, article_text):
 
 
 def cal_hit(input):
-    input_processed = input.errCheckedStr.replace(' ', '')
+    print('cal_hit, input.errCheckedStr: ' + str(input.errCheckedStr))
+    input_processed = input.errCheckedStr
     article_processed = preprocess_text(input.ai.engContent)
     at_count = input_processed.count("@")
     len_article = len(article_processed)
@@ -37,6 +38,8 @@ at_count = 0
 
 
 def chkErrors(input, article):
+    print(chkErrors)
+
     # Helper function to strip punctuation
     def strip_punctuation(word):
         return word.translate(str.maketrans('', '', string.punctuation))
@@ -74,4 +77,5 @@ def chkErrors(input, article):
                         word += c
                 returnList.append(word + articleList[index][len(articleWord):])  # Append original punctuation
 
-    return returnList, at_count  # Return the list and the count of "@"
+    result_string = ' '.join(returnList)  # Join the list into a single string
+    return result_string  # Return the string and the count of "@"
