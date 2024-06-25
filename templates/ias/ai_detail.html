@@ -101,9 +101,9 @@
     <!-- Audio recording and transcription -->
     <div class="container my-3" id="audioSection" style="display: none;">
         {% if ai.pk < recentWeek %}
-            <button id="recordBtn" class="btn btn-primary" disabled>Record</button>
+            <button id="recordBtn2" class="btn btn-primary" disabled>Record</button>
         {% else %}
-            <button id="recordBtn2" class="btn btn-primary">Record</button>
+            <button id="recordBtn" class="btn btn-primary">Record</button>
             <!-- Button to stop recording (initially hidden) -->
         {% endif %}
             <button id="stopBtn" type="submit" class="btn btn-danger" style="display: none;">Stop</button>

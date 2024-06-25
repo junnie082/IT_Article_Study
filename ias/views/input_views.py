@@ -7,7 +7,7 @@ from attendance.models import Attendance
 # from voice.function.voice import get_speech
 from ..forms import InputForm
 from attendance.function.attendance import create_attendance, update_attendance
-from ..function.cmpStrings import chkErrors, cmpInputArticle
+from ..function.cmpStrings import chkErrors, cmp_input_article
 from ..models import Input, AI
 
 # @login_required(login_url='common:login')
@@ -44,7 +44,7 @@ def input_modify(request, input_id):
             input = form.save(commit=False)
             input.modify_date = timezone.now()
             input.errCheckedStr = ' '.join(chkErrors(input.content, input.ai.engContent))
-            input.isTheSame = cmpInputArticle(input.content, input.ai.engContent)
+            input.isTheSame = cmp_input_article(input.content, input.ai.engContent)
             update_attendance(input)
             input.save()
             return redirect('{}#input_{}'.format(
